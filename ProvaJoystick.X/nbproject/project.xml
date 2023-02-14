@@ -3,8 +3,8 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>LSShip</name>
-            <creation-uuid>c701126f-c31a-4ab4-88ca-fb56a1dbbc99</creation-uuid>
+            <name>ProvaJoystick</name>
+            <creation-uuid>6c1ab82e-cddb-4d19-8cbb-05fd31771423</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions/>
             <cpp-extensions/>

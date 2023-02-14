@@ -3,8 +3,8 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>LSShip</name>
-            <creation-uuid>c701126f-c31a-4ab4-88ca-fb56a1dbbc99</creation-uuid>
+            <name>Lab7</name>
+            <creation-uuid>030db164-2cdb-4f77-817f-558bde28449e</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions/>
             <cpp-extensions/>
