@@ -1,4 +1,4 @@
-;LIST P=PIC18F4321 F=INHX32
+;    LIST P=PIC18F4321 F=INHX32
 ;#include <p18f4321.inc>
 ;    
 ;CONFIG OSC=HS
@@ -51,9 +51,7 @@
 ;  GOTO LOOP	
 ;
 ;END
-    
-    
-LIST P=PIC18F4321   F=INHX32
+    LIST P=PIC18F4321   F=INHX32
 
 ;El com es troba en el administrador de dispositivos
 
@@ -118,7 +116,17 @@ MOVWF SPBRG,0
     RETURN
 
    
-
+INIT_ADC
+  ;Analog OUT (AN0) and disable Vref
+  MOVLW b'00001110'
+  MOVWF ADCON1,0
+  ;Clear ADCON2
+  CLRF ADCON2,0
+  ;Enable ADC and select Channel 0
+  MOVLW b'00000001'
+  MOVWF ADCON0,0
+  RETURN
+  
 MAIN
 
     SETF ADCON1,0; Configurem el PORTA digital 
@@ -126,23 +134,29 @@ MAIN
     BCF TRISA,3,0
 
     BCF TRISA,4,0
-
-    movlw 'a'
-
-    movwf LoQueTransmeto
-
+    CALL INIT_ADC
     CALL INTSIO
 
     
 
 LOOP
-
-    MOVFF LoQueTransmeto,TXREG
-
     Call EsperaSIOTX
+    
+    ;Ready to pick output
+    BSF ADCON0,GO_NOT_DONE,0
 
-    INCF LoQueTransmeto,1
-
+    ;Process output
+    WAIT_ADC
+      BTFSC ADCON0,GO_NOT_DONE,0
+      GOTO WAIT_ADC
+    MOVFF ADRESH, TXREG
+    ;Ready to pick output
+    Call EsperaSIOTX
+      
+    MOVFF ADRESL, TXREG
+    
+    GOTO EsperaByte
+    
     GOTO LOOP
 
 EsperaSIOTX
@@ -158,34 +172,13 @@ EsperaByte
     GOTO EsperaByte
 
     MOVFF RCREG,LoQueRebo ;Moc lo que rebu a la equ
-
-    MOVF LoQueTransmeto,0 ;Moc lo que transmeto al work 
-
-    CPFSEQ LoQueRebo,0
-
-    GOTO IGUAL
-
-    GOTO DIFERENT
-
-RETURN
-
     
+    MOVLW .2
+    SUBWF LoQueRebo,0
+    BTFSS STATUS,Z,0
+    GOTO EsperaByte
+    ; Hem rebut un 2
+    RETURN
 
-DIFERENT
-
-    BSF LATA,3,0
-
-        BCF LATA,4,0
-
-
-RETURN
-
-IGUAL
-
-    BCF LATA,3,0
-
-    BSF LATA,4,0
-
-RETURN
 
 END

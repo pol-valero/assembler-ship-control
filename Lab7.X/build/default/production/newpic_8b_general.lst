@@ -1,10 +1,10 @@
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  1
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00001 ;LIST P=PIC18F4321 F=INHX32
+                      00001 ;    LIST P=PIC18F4321 F=INHX32
                       00002 ;#include <p18f4321.inc>
                       00003 ;    
                       00004 ;CONFIG OSC=HS
@@ -57,21 +57,18 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00051 ;  GOTO LOOP    
                       00052 ;
                       00053 ;END
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  2
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00054     
-                      00055     
-Warning[205]: Found directive in column 1. (LIST)
 Warning[215]: Processor superseded by command line.  Verify processor symbol.
-                      00056 LIST P=PIC18F4321   F=INHX32
+                      00054     LIST P=PIC18F4321   F=INHX32
+                      00055 
+                      00056 ;El com es troba en el administrador de dispositivos
                       00057 
-                      00058 ;El com es troba en el administrador de dispositivos
-                      00059 
-                      00060     #include <p18f4321.inc>
+                      00058     #include <p18f4321.inc>
                       00001         LIST
                       00002 
                       00003 ;==========================================================================
@@ -82,175 +79,162 @@ Warning[215]: Processor superseded by command line.  Verify processor symbol.
                       00008 ;==========================================================================
                       00009 
                       01455         LIST
+                      00059 
+                      00060     CONFIG  OSC=HS     ; L?oscil.lador
                       00061 
-                      00062     CONFIG  OSC=HS     ; L?oscil.lador
+                      00062     CONFIG  PBADEN=DIG ; Volem que el PORTB sigui DIGital
                       00063 
-                      00064     CONFIG  PBADEN=DIG ; Volem que el PORTB sigui DIGital
+                      00064     CONFIG  WDT=OFF    ; Desactivem el WatchDog Timer
                       00065 
-                      00066     CONFIG  WDT=OFF    ; Desactivem el WatchDog Timer
+                      00066     
                       00067 
-                      00068     
-                      00069 
 Warning[207]: Found label after column 1. (LoQueTransmeto)
-  00000000            00070     LoQueTransmeto EQU 0X00
-                      00071 
+  00000000            00068     LoQueTransmeto EQU 0X00
+                      00069 
 Warning[207]: Found label after column 1. (LoQueRebo)
-  00000001            00072     LoQueRebo EQU 0X01
+  00000001            00070     LoQueRebo EQU 0X01
+                      00071 
+                      00072  
                       00073 
-                      00074  
+                      00074     ORG     0x0000
                       00075 
-                      00076     ORG     0x0000
+000000 EF?? F???      00076     GOTO    MAIN 
                       00077 
-000000 EF?? F???      00078     GOTO    MAIN 
+                      00078     ORG     0x0008
                       00079 
-                      00080     ORG     0x0008
+000008 0011           00080     RETFIE FAST
                       00081 
-000008 0011           00082     RETFIE FAST
+                      00082     ;GOTO ProcessaRSI
                       00083 
-                      00084     ;GOTO ProcessaRSI
+                      00084     ORG     0x0018
                       00085 
-                      00086     ORG     0x0018
+000018 0011           00086     RETFIE FAST
                       00087 
-000018 0011           00088     RETFIE FAST
+                      00088     ;ProcessaRSI
                       00089 
-                      00090     ;ProcessaRSI
-                      00091 
 Warning[207]: Found label after column 1. (INTSIO)
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  3
+00001A                00090     INTSIO
+                      00091 
+Warning[203]: Found opcode in column 1. (BSF)
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00001A                00092     INTSIO
+00001A 8C94           00092 BSF TRISC,6,0
                       00093 
 Warning[203]: Found opcode in column 1. (BSF)
-00001A 8C94           00094 BSF TRISC,6,0
+00001C 8E94           00094 BSF TRISC,7,0
                       00095 
-Warning[203]: Found opcode in column 1. (BSF)
-00001C 8E94           00096 BSF TRISC,7,0
+Warning[203]: Found opcode in column 1. (MOVLW)
+00001E 0E24           00096 MOVLW b'00100100'  ;BIT 2 HIGH SPEED OR LOW SPEED?
                       00097 
-Warning[203]: Found opcode in column 1. (MOVLW)
-00001E 0E24           00098 MOVLW b'00100100'  ;BIT 2 HIGH SPEED OR LOW SPEED?
+Warning[203]: Found opcode in column 1. (MOVWF)
+000020 6EAC           00098 MOVWF TXSTA,0
                       00099 
-Warning[203]: Found opcode in column 1. (MOVWF)
-000020 6EAC           00100 MOVWF TXSTA,0
+Warning[203]: Found opcode in column 1. (MOVLW)
+000022 0E90           00100 MOVLW b'10010000'
                       00101 
-Warning[203]: Found opcode in column 1. (MOVLW)
-000022 0E90           00102 MOVLW b'10010000'
+Warning[203]: Found opcode in column 1. (MOVWF)
+000024 6EAB           00102 MOVWF RCSTA,0
                       00103 
-Warning[203]: Found opcode in column 1. (MOVWF)
-000024 6EAB           00104 MOVWF RCSTA,0
+Warning[203]: Found opcode in column 1. (MOVLW)
+000026 0E08           00104 MOVLW b'00001000'
                       00105 
-Warning[203]: Found opcode in column 1. (MOVLW)
-000026 0E08           00106 MOVLW b'00001000'
+Warning[203]: Found opcode in column 1. (MOVWF)
+000028 6EB8           00106 MOVWF BAUDCON,0
                       00107 
-Warning[203]: Found opcode in column 1. (MOVWF)
-000028 6EB8           00108 MOVWF BAUDCON,0
-                      00109 
 Warning[203]: Found opcode in column 1. (MOVLW)
-00002A 0E01           00110 MOVLW high(.259)
+00002A 0E01           00108 MOVLW high(.259)
+                      00109 
+Warning[203]: Found opcode in column 1. (MOVWF)
+00002C 6EB0           00110 MOVWF SPBRGH,0
                       00111 
-Warning[203]: Found opcode in column 1. (MOVWF)
-00002C 6EB0           00112 MOVWF SPBRGH,0
-                      00113 
 Warning[203]: Found opcode in column 1. (movlw)
-00002E 0E03           00114 movlw low(.259)
-                      00115 
+00002E 0E03           00112 movlw low(.259)
+                      00113 
 Warning[203]: Found opcode in column 1. (MOVWF)
-000030 6EAF           00116 MOVWF SPBRG,0
+000030 6EAF           00114 MOVWF SPBRG,0
+                      00115 
+000032 0012           00116     RETURN
                       00117 
-000032 0012           00118     RETURN
-                      00119 
-                      00120    
-                      00121 
-000034                00122 MAIN
-                      00123 
-000034 68C1           00124     SETF ADCON1,0; Configurem el PORTA digital 
-                      00125 
-000036 9692           00126     BCF TRISA,3,0
-                      00127 
-000038 9892           00128     BCF TRISA,4,0
-                      00129 
-00003A 0E61           00130     movlw 'a'
+                      00118    
+000034                00119 INIT_ADC
+                      00120   ;Analog OUT (AN0) and disable Vref
+000034 0E0E           00121   MOVLW b'00001110'
+000036 6EC1           00122   MOVWF ADCON1,0
+                      00123   ;Clear ADCON2
+000038 6AC0           00124   CLRF ADCON2,0
+                      00125   ;Enable ADC and select Channel 0
+00003A 0E01           00126   MOVLW b'00000001'
+00003C 6EC2           00127   MOVWF ADCON0,0
+00003E 0012           00128   RETURN
+                      00129   
+000040                00130 MAIN
                       00131 
-00003C 6E00           00132     movwf LoQueTransmeto
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  4
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
+000040 68C1           00132     SETF ADCON1,0; Configurem el PORTA digital 
                       00133 
-00003E EC?? F???      00134     CALL INTSIO
-                      00135 
-                      00136     
-                      00137 
-000042                00138 LOOP
-                      00139 
-000042 C000 FFAD      00140     MOVFF LoQueTransmeto,TXREG
-                      00141 
-000046 EC?? F???      00142     Call EsperaSIOTX
-                      00143 
-00004A 2A00           00144     INCF LoQueTransmeto,1
-                      00145 
-00004C EF?? F???      00146     GOTO LOOP
-                      00147 
-000050                00148 EsperaSIOTX
-                      00149 
-000050 A2AC           00150     BTFSS TXSTA,TRMT,0 ;SKIP IF EMMPTY
-                      00151 
-000052 EF?? F???      00152     GOTO EsperaSIOTX
-                      00153 
-000056                00154 EsperaByte
-                      00155 
-000056 AA9E           00156     BTFSS PIR1,RCIF,0  ;Si es fica a 1 eesque ha entrat un nou byte,i aquets byte esta en el rcreg
-                      00157 
-000058 EF?? F???      00158     GOTO EsperaByte
-                      00159 
-00005C CFAE F001      00160     MOVFF RCREG,LoQueRebo ;Moc lo que rebu a la equ
-                      00161 
-000060 5000           00162     MOVF LoQueTransmeto,0 ;Moc lo que transmeto al work 
-                      00163 
-000062 6201           00164     CPFSEQ LoQueRebo,0
-                      00165 
-000064 EF?? F???      00166     GOTO IGUAL
-                      00167 
-000068 EF?? F???      00168     GOTO DIFERENT
-                      00169 
-Warning[203]: Found opcode in column 1. (RETURN)
-00006C 0012           00170 RETURN
-                      00171 
-                      00172     
-                      00173 
-00006E                00174 DIFERENT
-                      00175 
-00006E 8689           00176     BSF LATA,3,0
-                      00177 
-000070 9889           00178         BCF LATA,4,0
-                      00179 
-                      00180 
-Warning[203]: Found opcode in column 1. (RETURN)
-000072 0012           00181 RETURN
-                      00182 
-000074                00183 IGUAL
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  5
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00184 
-000074 9689           00185     BCF LATA,3,0
-                      00186 
-000076 8889           00187     BSF LATA,4,0
-                      00188 
-Warning[203]: Found opcode in column 1. (RETURN)
-000078 0012           00189 RETURN
-                      00190 
+000042 9692           00134     BCF TRISA,3,0
+                      00135 
+000044 9892           00136     BCF TRISA,4,0
+000046 EC?? F???      00137     CALL INIT_ADC
+00004A EC?? F???      00138     CALL INTSIO
+                      00139 
+                      00140     
+                      00141 
+00004E                00142 LOOP
+00004E EC?? F???      00143     Call EsperaSIOTX
+                      00144     
+                      00145     ;Ready to pick output
+000052 82C2           00146     BSF ADCON0,GO_NOT_DONE,0
+                      00147 
+                      00148     ;Process output
+Warning[207]: Found label after column 1. (WAIT_ADC)
+000054                00149     WAIT_ADC
+000054 B2C2           00150       BTFSC ADCON0,GO_NOT_DONE,0
+000056 EF?? F???      00151       GOTO WAIT_ADC
+00005A CFC4 FFAD      00152     MOVFF ADRESH, TXREG
+                      00153     ;Ready to pick output
+00005E EC?? F???      00154     Call EsperaSIOTX
+                      00155       
+000062 CFC3 FFAD      00156     MOVFF ADRESL, TXREG
+                      00157     
+000066 EF?? F???      00158     GOTO EsperaByte
+                      00159     
+00006A EF?? F???      00160     GOTO LOOP
+                      00161 
+00006E                00162 EsperaSIOTX
+                      00163 
+00006E A2AC           00164     BTFSS TXSTA,TRMT,0 ;SKIP IF EMMPTY
+                      00165 
+000070 EF?? F???      00166     GOTO EsperaSIOTX
+                      00167 
+000074                00168 EsperaByte
+                      00169 
+000074 AA9E           00170     BTFSS PIR1,RCIF,0  ;Si es fica a 1 eesque ha entrat un nou byte,i aquets byte esta en el rcreg
+                      00171 
+000076 EF?? F???      00172     GOTO EsperaByte
+                      00173 
+00007A CFAE F001      00174     MOVFF RCREG,LoQueRebo ;Moc lo que rebu a la equ
+                      00175     
+00007E 0E02           00176     MOVLW .2
+000080 5C01           00177     SUBWF LoQueRebo,0
+000082 A4D8           00178     BTFSS STATUS,Z,0
+000084 EF?? F???      00179     GOTO EsperaByte
+                      00180     ; Hem rebut un 2
+000088 0012           00181     RETURN
+                      00182 
+                      00183 
 Warning[205]: Found directive in column 1. (END)
-                      00191 END
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  6
+                      00184 END
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  5
 
 
 SYMBOL TABLE
@@ -309,7 +293,7 @@ BCLIP                             00000003
 BF                                00000000
 BGST                              00000005
 BOR                               00000000
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  7
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  6
 
 
 SYMBOL TABLE
@@ -368,7 +352,7 @@ CK                                00000006
 CKE                               00000006
 CKP                               00000004
 CLKI                              00000007
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  8
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  7
 
 
 SYMBOL TABLE
@@ -406,7 +390,6 @@ DDRB                              TRISB
 DDRC                              TRISC
 DDRD                              TRISD
 DDRE                              TRISE
-DIFERENT                          0000006E
 DONE                              00000001
 D_A                               00000005
 D_NOT_A                           00000005
@@ -425,15 +408,15 @@ EEIE                              00000004
 EEIF                              00000004
 EEIP                              00000004
 EEPGD                             00000007
-EsperaByte                        00000056
-EsperaSIOTX                       00000050
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE  9
+EsperaByte                        00000074
+EsperaSIOTX                       0000006E
+FAST                              00000001
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  8
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-FAST                              00000001
 FERR                              00000002
 FLT0                              00000000
 FLTS                              00000002
@@ -468,10 +451,10 @@ HLVDL3                            00000003
 IBF                               00000007
 IBOV                              00000005
 IDLEN                             00000007
-IGUAL                             00000074
 INDF0                             00000FEF
 INDF1                             00000FE7
 INDF2                             00000FDF
+INIT_ADC                          00000034
 INT0                              00000000
 INT0E                             00000004
 INT0F                             00000001
@@ -486,13 +469,13 @@ INT1IP                            00000006
 INT1P                             00000006
 INT2                              00000002
 INT2E                             00000004
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 10
+INT2F                             00000001
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE  9
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-INT2F                             00000001
 INT2IE                            00000004
 INT2IF                            00000001
 INT2IP                            00000007
@@ -545,13 +528,13 @@ LATC5                             00000005
 LATC6                             00000006
 LATC7                             00000007
 LATD                              00000F8C
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 11
+LATD0                             00000000
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 10
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-LATD0                             00000000
 LATD1                             00000001
 LATD2                             00000002
 LATD3                             00000003
@@ -563,7 +546,7 @@ LATE                              00000F8D
 LATE0                             00000000
 LATE1                             00000001
 LATE2                             00000002
-LOOP                              00000042
+LOOP                              0000004E
 LVDCON                            00000FD2
 LVDEN                             00000004
 LVDIE                             00000002
@@ -579,7 +562,7 @@ LVV2                              00000002
 LVV3                              00000003
 LoQueRebo                         00000001
 LoQueTransmeto                    00000000
-MAIN                              00000034
+MAIN                              00000040
 MCLR                              00000003
 N                                 00000004
 NOT_A                             00000005
@@ -604,13 +587,13 @@ OBF                               00000006
 OERR                              00000001
 OSC1                              00000007
 OSC2                              00000006
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 12
+OSCCON                            00000FD3
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 11
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-OSCCON                            00000FD3
 OSCFIE                            00000007
 OSCFIF                            00000007
 OSCFIP                            00000007
@@ -663,13 +646,13 @@ PORTE                             00000F84
 POSTDEC0                          00000FED
 POSTDEC1                          00000FE5
 POSTDEC2                          00000FDD
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 13
+POSTINC0                          00000FEE
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 12
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-POSTINC0                          00000FEE
 POSTINC1                          00000FE6
 POSTINC2                          00000FDE
 PR2                               00000FCB
@@ -722,13 +705,13 @@ RBPU                              00000007
 RC0                               00000000
 RC1                               00000001
 RC2                               00000002
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 14
+RC3                               00000003
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 13
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-RC3                               00000003
 RC4                               00000004
 RC5                               00000005
 RC6                               00000006
@@ -781,13 +764,13 @@ SP0                               00000000
 SP1                               00000001
 SP2                               00000002
 SP3                               00000003
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 15
+SP4                               00000004
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 14
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-SP4                               00000004
 SPBRG                             00000FAF
 SPBRGH                            00000FB0
 SPEN                              00000007
@@ -840,13 +823,13 @@ T2CKPS1                           00000001
 T2CON                             00000FCA
 T2OUTPS0                          00000003
 T2OUTPS1                          00000004
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 16
+T2OUTPS2                          00000005
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 15
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-T2OUTPS2                          00000005
 T2OUTPS3                          00000006
 T3CCP1                            00000003
 T3CCP2                            00000006
@@ -899,13 +882,13 @@ TOUTPS3                           00000006
 TRISA                             00000F92
 TRISA0                            00000000
 TRISA1                            00000001
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 17
+TRISA2                            00000002
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 16
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-TRISA2                            00000002
 TRISA3                            00000003
 TRISA4                            00000004
 TRISA5                            00000005
@@ -958,13 +941,13 @@ TXIF                              00000004
 TXIP                              00000004
 TXREG                             00000FAD
 TXSTA                             00000FAC
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 18
+UA                                00000001
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 17
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-UA                                00000001
 VCFG0                             00000004
 VCFG1                             00000005
 VDIRMAG                           00000007
@@ -972,6 +955,7 @@ VPP                               00000003
 VREFM                             00000002
 VREFP                             00000003
 W                                 00000000
+WAIT_ADC                          00000054
 WCOL                              00000007
 WDTCON                            00000FD1
 WR                                00000001
@@ -1017,7 +1001,7 @@ _DEBUG_ON_4L                      0000007F
 _DEVID1                           003FFFFE
 _DEVID2                           003FFFFF
 _EBTR0_OFF_7L                     000000FF
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 19
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 18
 
 
 SYMBOL TABLE
@@ -1076,7 +1060,7 @@ _WDTPS_4096_2H                    000000F9
 _WDTPS_4_2H                       000000E5
 _WDTPS_512_2H                     000000F3
 _WDTPS_64_2H                      000000ED
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-14-2023  16:48:38         PAGE 20
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-15-2023  20:32:33         PAGE 19
 
 
 SYMBOL TABLE
@@ -1101,7 +1085,7 @@ _XINST_ON_4L                      000000FF
 __18F4321                         00000001
 
 Errors   :     0
-Warnings :    21 reported,     0 suppressed
+Warnings :    18 reported,     0 suppressed
 Messages :     0 reported,     0 suppressed
 
 
