@@ -26,8 +26,8 @@ MANUAL_MODE	 EQU  0x05
 	   ;7 --> High Positive 
 VEL_ACTUAL	 EQU  0x06
 ; Comptador per filtrar rebots
-ContRebotsL	 EQU  0x07
-ContRebotsH	 EQU  0x08 
+ContInstL	 EQU  0x07
+ContInstH	 EQU  0x08 
 ; Comptador per comptar 1 minut (per inactivitat)
 TicsMinH	 EQU  0x09
 TicsMinL	 EQU  0x10
@@ -44,6 +44,24 @@ TicsSegL	 EQU  0x15
 TicsSegH	 EQU  0x16
 ; Flag per saber si estem en mode recording (=1) o no ho estem (=0)
 RECORD_MODE	 EQU  0x17
+; Comptador per comptar periodes de PWM del servo (20ms)
+Tics20		 EQU  0x18
+; Codi dir: 1 --> Max Left
+	   ;2 --> High Left
+	   ;3 --> Mid Left
+	   ;4 --> Low Left
+	   ;5 --> Straight
+	   ;6 --> Low Right
+	   ;7 --> Mid Right 
+	   ;8 --> High Right
+	   ;9 --> Max Right
+DIR_ACTUAL	 EQU  0x19
+; Flag per saber si la direccio és esquerra (=1) o dreta (=0)
+IS_LEFT		 EQU  0x20
+; Comptador per comptar el THigh del PWM del servo
+ContTHigh	 EQU  0x21
+ContPWM		 EQU  0x22
+PWM		 EQU  0x23
 
 ORG 0x0000
 GOTO MAIN
@@ -89,12 +107,37 @@ HIGH_RSI
   RETFIE FAST
   BCF INTCON,TMR0IF,0
   CALL LOAD_TMR
+  CALL CHECK_20ms
   BTFSC AUTOP_EN,0
   CALL CHECK_TICS_SEG
   BTFSS ALARM_EN,0
   GOTO CHECK_TICS_MIN
   GOTO MINUTE_PASSED
 
+; Comprova si ha passat 20ms (1 periode de PWM del servo)
+CHECK_20ms
+  INCF Tics20,1
+  MOVLW .20
+  SUBWF Tics20,0
+  BTFSC STATUS,Z,0
+  CALL NEW_SERVO_PWM
+  RETURN
+  
+; Posa el temps a 1 que marca la direccio actual 
+NEW_SERVO_PWM
+  MOVFF DIR_ACTUAL,ContTHigh
+  ;MOVLW .1
+  ;MOVWF ContTHigh
+  ;BSF LATA,PWM,0
+  ;T_PASSOS
+    ;CALL COUNT_PAS_SERVO
+   ; DECF ContTHigh,1
+   ; BTFSS STATUS,Z,0
+   ; GOTO T_PASSOS
+  ;BCF LATA,PWM,0
+  CLRF Tics20
+  RETURN
+  
 ; Comprova si ha passat 1 minut d'inactivitat (60000ms = 1min)
 CHECK_TICS_MIN
   INCF TicsMinL,1
@@ -228,6 +271,8 @@ INIT_OSC
 INIT_PORTS
   CLRF TRISD,0
   BSF TRISA,0,0
+  BSF TRISA,1,0
+  BCF TRISA,2,0
   BSF TRISB,0,0
   BSF TRISB,1,0
   BCF TRISA,3,0
@@ -250,17 +295,21 @@ INIT_VARS
   CALL RESET_TICS_MIN
   MOVLW .4
   MOVWF VEL_ACTUAL
+  MOVLW .5
+  MOVWF DIR_ACTUAL
   CLRF ALARM_EN
   CLRF IS_NEGATIVE
   BCF LATA,4,0 ;TODO: DEBUGGING
   CLRF AUTOP_EN
   CLRF RECORD_MODE
+  CLRF Tics20
+  BCF LATA,2,0
   RETURN
 
 ; Inicialitza ADC pel joystick (AN0 i AN1)
 INIT_ADC
-  ;Analog OUT (AN0) i deshabilita Vref
-  MOVLW b'00001110'
+  ;Analog OUT (AN0 & AN1) i deshabilita Vref
+  MOVLW b'00001101'
   MOVWF ADCON1,0
   ;Clear ADCON2
   CLRF ADCON2,0
@@ -301,18 +350,15 @@ CALL CHANGE_MANUAL_MODE
 ; Consulta Polsador Recording
 BTFSS PORTB,1,0
 CALL CHANGE_RECORDING_MODE
-; Check Mode
+; Check direccio
+CALL TAKE_DIRECTION 
+; Check Mode i velocitat si Manual
 BTFSS MANUAL_MODE,0
 GOTO LOOP
 
-;Preparat per agafar l'output
-BSF ADCON0,GO_NOT_DONE,0
-
-;Procesessa l'output
-WAIT_ADC
-  BTFSC ADCON0,GO_NOT_DONE,0
-  GOTO WAIT_ADC
-
+; Selecciona CH0
+BCF ADCON0,CHS0,0
+CALL WAIT_GO_ADC
 
 ;Agafa el output (en ADRESH)
 ;Per utilitzar 7 passos OUTPUT --> ADRESH rang (numero de valors) 
@@ -328,46 +374,46 @@ WAIT_ADC
 MOVLW .139
 SUBWF ADRESH,0,0
 BTFSC STATUS,N,0
-GOTO CHECK_LOW
-GOTO CHECK_HIGH 
+GOTO CHECK_LOW_VEL
+GOTO CHECK_HIGH_VEL
 
-; Assigna les velocitats negatives
-CHECK_LOW
+; Assigna les velocitats negatives i el 0
+CHECK_LOW_VEL
   MOVLW .39
   SUBWF ADRESH,0,0
   BTFSC STATUS,N,0
-  GOTO VEL_N_HIGH_7Seg
+  GOTO VEL_N_HIGH
   MOVLW .78
   SUBWF ADRESH,0,0
   BTFSC STATUS,N,0
-  GOTO VEL_N_MID_7Seg
+  GOTO VEL_N_MID
   MOVLW .117
   SUBWF ADRESH,0,0
   BTFSC STATUS,N,0
-  GOTO VEL_N_LOW_7Seg
-  GOTO VEL_0_7Seg
+  GOTO VEL_N_LOW
+  GOTO VEL_0
 
 ; Assigna les velocitats positives
-CHECK_HIGH
+CHECK_HIGH_VEL
   MOVLW .178
   SUBWF ADRESH,0,0
   BTFSC STATUS,N,0
-  GOTO VEL_P_LOW_7Seg 
+  GOTO VEL_P_LOW
   MOVLW .217
   SUBWF ADRESH,0,0
   BTFSC STATUS,N,0
-  GOTO VEL_P_MID_7Seg 
+  GOTO VEL_P_MID
   MOVLW .255
   SUBWF ADRESH,0,0
   BTFSC STATUS,N,0
-  GOTO VEL_P_HIGH_7Seg
+  GOTO VEL_P_HIGH
 
-; Les següents funcions assignen la velocitat corresponent al 7seg i encenen
+; Les següents funcions assignen la velocitat, i la posen als 7seg i encenen
 ; o apaguen el led de velocitat negatiu mentre no estigui l'alarma activada
 ; Assigna la velocitat (N) H
-VEL_N_HIGH_7Seg
+VEL_N_HIGH
   BTFSS IS_NEGATIVE,0
-  GOTO VEL_P_HIGH_7Seg
+  GOTO VEL_P_HIGH
   MOVLW .1
   SUBWF VEL_ACTUAL,0
   BTFSC STATUS,Z,0
@@ -383,7 +429,7 @@ VEL_N_HIGH_7Seg
   GOTO LOOP
 
 ; Assigna la velocitat (N) M 
-VEL_N_MID_7Seg
+VEL_N_MID
   MOVLW .2
   SUBWF VEL_ACTUAL,0
   BTFSC STATUS,Z,0
@@ -399,7 +445,7 @@ VEL_N_MID_7Seg
   GOTO LOOP
 
 ; Assigna la velocitat (N) L
-VEL_N_LOW_7Seg
+VEL_N_LOW
   MOVLW .3
   SUBWF VEL_ACTUAL,0
   BTFSC STATUS,Z,0
@@ -415,7 +461,7 @@ VEL_N_LOW_7Seg
   GOTO LOOP
 
 ; Assigna la velocitat 0
-VEL_0_7Seg
+VEL_0
   MOVLW .4
   SUBWF VEL_ACTUAL,0
   BTFSC STATUS,Z,0
@@ -430,7 +476,7 @@ VEL_0_7Seg
   GOTO LOOP
 
 ; Assigna la velocitat (P) L 
-VEL_P_LOW_7Seg
+VEL_P_LOW
   MOVLW .5
   SUBWF VEL_ACTUAL,0
   BTFSC STATUS,Z,0
@@ -445,7 +491,7 @@ VEL_P_LOW_7Seg
   GOTO LOOP
 
 ; Assigna la velocitat (P) M
-VEL_P_MID_7Seg
+VEL_P_MID
   MOVLW .6
   SUBWF VEL_ACTUAL,0
   BTFSC STATUS,Z,0
@@ -460,7 +506,7 @@ VEL_P_MID_7Seg
   GOTO LOOP
 
 ; Assigna la velocitat (P) H
-VEL_P_HIGH_7Seg
+VEL_P_HIGH
   MOVLW .7
   SUBWF VEL_ACTUAL,0
   BTFSC STATUS,Z,0
@@ -474,28 +520,251 @@ VEL_P_HIGH_7Seg
   CLRF IS_NEGATIVE
   GOTO LOOP
 
+; Assigna la direccio actual
+TAKE_DIRECTION
+  ; Selecciona CH1
+  BSF ADCON0,CHS0,0
+  CALL WAIT_GO_ADC
+  ;Agafa el output (en ADRESH)
+  ;Per utilitzar 9 passos OUTPUT --> ADRESH rang (numero de valors) 
+			;MAX (L) --> [0,10]     (11)
+			;H (L) --> [11,46]      (36)
+			;M (L) --> [47, 82]    (36)
+			;L (L) --> [83,118]    (36)
+			;S --> [119, 136]       (18)
+			;L (R) --> [137,172]    (36)
+			;M (R) --> [173,208]    (36)
+			;H (R) --> [209,244]      (36)
+			;MAX (R) --> [245,255]  (11)
+  
+  ; Divideix in 2 parts per utilitzar el bit Negative de STATUS 
+  ; Sense sobrepassar el limit CA2
+  MOVLW .137
+  SUBWF ADRESH,0,0
+  BTFSC STATUS,N,0
+  GOTO CHECK_LOW_DIR
+  GOTO CHECK_HIGH_DIR
+  
+  ; Assigna les direccions de l'esquerra i el 0
+  CHECK_LOW_DIR			
+    MOVLW .11
+    SUBWF ADRESH,0,0
+    BTFSC STATUS,N,0
+    GOTO DIR_L_MAX
+    MOVLW .47
+    SUBWF ADRESH,0,0
+    BTFSC STATUS,N,0
+    GOTO DIR_L_HIGH
+    MOVLW .83
+    SUBWF ADRESH,0,0
+    BTFSC STATUS,N,0
+    GOTO DIR_L_MID
+    MOVLW .119
+    SUBWF ADRESH,0,0
+    BTFSC STATUS,N,0
+    GOTO DIR_L_LOW
+    GOTO DIR_S
+  
+  ; Assigna les direccions de la dreta
+  CHECK_HIGH_DIR
+    MOVLW .173  
+    SUBWF ADRESH,0,0
+    BTFSC STATUS,N,0
+    GOTO DIR_R_LOW
+    MOVLW .209
+    SUBWF ADRESH,0,0
+    BTFSC STATUS,N,0
+    GOTO DIR_R_MID
+    MOVLW .245
+    SUBWF ADRESH,0,0
+    BTFSC STATUS,N,0
+    GOTO DIR_R_HIGH
+    MOVLW .255
+    SUBWF ADRESH,0,0
+    BTFSC STATUS,N,0
+    GOTO DIR_R_MAX
+    GOTO DIR_L_MAX
+  
+  GO_BACK
+  RETURN
+  
+; Les següents funcions assignen la direccio, i la posen a la barra de leds,
+; a mes de mesurar el PWM que haura de tenir el servo
+; Assigna la direccio (L) MAX
+DIR_L_MAX
+  BTFSS IS_LEFT,0
+  GOTO DIR_R_MAX
+  MOVLW .1
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .1
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+  MOVLW .1
+  MOVWF IS_LEFT
+  GOTO GO_BACK
+ 
+; Assigna la direccio (L) HIGH
+DIR_L_HIGH
+  BTFSS IS_LEFT,0
+  GOTO DIR_R_MAX
+  MOVLW .2
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .2
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+  MOVLW .1
+  MOVWF IS_LEFT
+  GOTO GO_BACK
+  
+; Assigna la direccio (L) MID
+DIR_L_MID
+  MOVLW .3
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .3
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+  MOVLW .1
+  MOVWF IS_LEFT
+  GOTO GO_BACK
+  
+; Assigna la direccio (L) LOW
+DIR_L_LOW
+  MOVLW .4
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .4
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+  MOVLW .1
+  MOVWF IS_LEFT
+  GOTO GO_BACK
+  
+; Assigna la direccio Straight (Recte)
+DIR_S
+  MOVLW .5
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .5
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+  BCF LATA,4,0 ;TODO: DEBUGGING
+  CLRF IS_LEFT
+  GOTO GO_BACK
+  
+; Assigna la direccio (R) LOW
+DIR_R_LOW
+  MOVLW .6
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .6
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+  CLRF IS_LEFT
+  GOTO GO_BACK
+  
+; Assigna la direccio (R) MID
+DIR_R_MID
+  MOVLW .7
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .7
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+  CLRF IS_LEFT
+  GOTO GO_BACK
+  
+; Assigna la direccio (R) HIGH
+DIR_R_HIGH
+  MOVLW .8
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .8
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+  CLRF IS_LEFT
+  GOTO GO_BACK
+  
+; Assigna la direccio (R) MAX
+DIR_R_MAX
+  MOVLW .9
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  GOTO GO_BACK
+  MOVLW .9
+  MOVWF DIR_ACTUAL
+  CALL RESET_TICS_MIN
+  ; Aqui s'encendria el valor corresponent a la barra de leds
+   BSF LATA,4,0 ;TODO: DEBUGGING
+   ;BSF LATA,2,0 ;TODO: DEBUGGING
+   ;CALL COUNT_PAS_SERVO
+   ;BCF LATA,2,0
+  CLRF IS_LEFT
+  GOTO GO_BACK
 
+  
+; Treu l'output de ADC quan hagi acabat de fer la transformacio 
+WAIT_GO_ADC
+  ;Preparat per agafar l'output
+  BSF ADCON0,GO_NOT_DONE,0
+  ;Procesessa l'output
+  WAIT_ADC
+    BTFSC ADCON0,GO_NOT_DONE,0
+    GOTO WAIT_ADC
+  RETURN
+  
 ;--------------------------------------
 ; COMPTATGES D'INSTRUCCIONS
 ;--------------------------------------
-
 ; Compta 20ms corresponents al temps de rebots dels polsadors 
 ; TTarget = 20ms | Tinst = 250ns --> #inst = 80.000 - 4 = 79996
 ; 4 + (4*X + 6)*Y = 79996 --> X = 255 | Y = 78
 COUNT_20ms
   MOVLW .1 ;x = 256 - 255 = 1
-  MOVWF ContRebotsL
+  MOVWF ContInstL
   MOVLW .178 ;y = 256 - 78 = 178
-  MOVWF ContRebotsH
+  MOVWF ContInstH
   T_REBOTS
-    INCF ContRebotsL,1
+    INCF ContInstL,1
     BTFSS STATUS,C,0
     GOTO T_REBOTS
     MOVLW .1
-    MOVWF ContRebotsL
-    INCF ContRebotsH,1
+    MOVWF ContInstL
+    INCF ContInstH,1
     BTFSS STATUS,C,0
     GOTO T_REBOTS
+  RETURN
+  
+; Compta 222us corresponents a 1 pas dels 9 que hi ha per mesurar la direccio 
+; TTarget = 222us | Tinst = 250ns --> #inst = 888 - 4 = 884
+; 2 + 4*X = 884 --> 2 NOP's i X = 220
+COUNT_PAS_SERVO
+  MOVLW .36 ;x = 256 - 220 = 36
+  MOVWF ContPWM
+  NOP
+  NOP
+  T_PAS
+    INCF ContPWM,1
+    BTFSS STATUS,C,0
+    GOTO T_PAS  
   RETURN
 	
 END
