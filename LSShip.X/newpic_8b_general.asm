@@ -60,8 +60,23 @@ DIR_ACTUAL	 EQU  0x19
 IS_LEFT		 EQU  0x20
 ; Comptador per comptar el THigh del PWM del servo
 ContTHigh	 EQU  0x21
-ContPWM		 EQU  0x22
-PWM		 EQU  0x23
+; Comptador per comptar el numero de passos que li toca al PWM
+ContPWML	 EQU  0x22
+ContPWMH	 EQU  0x23
+; Comptador per comptar el delay entre save i save de 1ms en 1ms i fins a 1min
+TicsDelayL	 EQU  0x24
+TicsDelayH	 EQU  0x25
+; Comptador per comptar el numero de Saves que ha fet per una ruta (max 30)
+ContSaves	 EQU  0x26
+; Flag per saber si estem en mode pilot automatic (=1) o no (=0)
+AUTOP_MODE	 EQU  0x27
+; Flag per saber si estem fent una espera de delay en el mode automatic 
+; (=1) o no (=0)
+DELAY_ESPERA_EN	 EQU  0x28
+; Temps de delay que tenim entre un save i un altre
+; El delay el treiem del que llegim a la RAM en el mode pilot automatic
+TIME_DELAY_L	 EQU  0x29
+TIME_DELAY_H	 EQU  0x30
 
 ORG 0x0000
 GOTO MAIN
@@ -87,6 +102,11 @@ RESET_TICS_MIN
   CLRF TicsMinH
   CLRF TicsMinL
   RETURN
+ 
+RESET_TICS_DELAY
+  CLRF TicsMinH
+  CLRF TicsMinL
+  RETURN
 
 ; Reseteja el comptador de 1seg   
 RESET_TICS_SEG
@@ -108,12 +128,49 @@ HIGH_RSI
   BCF INTCON,TMR0IF,0
   CALL LOAD_TMR
   CALL CHECK_20ms
+  BTFSC DELAY_ESPERA_EN,0,0
+  CALL CHECK_TICS_DELAY_AUTO
+  BTFSC RECORD_MODE,0,0
+  CALL CHECK_TICS_DELAY_REC
   BTFSC AUTOP_EN,0
   CALL CHECK_TICS_SEG
   BTFSS ALARM_EN,0
   GOTO CHECK_TICS_MIN
   GOTO MINUTE_PASSED
 
+; Espera el temps de delay que se li ha assignat
+CHECK_TICS_DELAY_AUTO
+  INCF TicsDelayL,1
+  BTFSC STATUS,C,0
+  INCF TicsDelayH,1
+  MOVF TIME_DELAY_H
+  SUBWF TicsDelayH,0
+  BTFSS STATUS,Z,0
+  RETURN
+  MOVF TIME_DELAY_L
+  SUBWF TicsDelayL,0
+  BTFSS STATUS,Z,0
+  RETURN
+  ; Ha passat el temps de delay aixi que desactivem el enable de espera
+  CLRF DELAY_ESPERA_EN
+  RETURN
+  
+; Compta el delay de Save en Save en el mode Record i avisa si ha passat 1min
+CHECK_TICS_DELAY_REC
+  INCF TicsDelayL,1
+  BTFSC STATUS,C,0
+  INCF TicsDelayH,1
+  MOVLW HIGH(.60000)
+  SUBWF TicsDelayH,0
+  BTFSS STATUS,Z,0
+  RETURN
+  MOVLW LOW(.60000)
+  SUBWF TicsDelayL,0
+  BTFSS STATUS,Z,0
+  RETURN
+  CLRF RECORD_MODE
+  CALL RESET_TICS_DELAY
+  RETURN
 ; Comprova si ha passat 20ms (1 periode de PWM del servo)
 CHECK_20ms
   INCF Tics20,1
@@ -126,20 +183,35 @@ CHECK_20ms
 ; Posa el temps a 1 que marca la direccio actual 
 NEW_SERVO_PWM
   MOVFF DIR_ACTUAL,ContTHigh
-  ;MOVLW .1
-  ;MOVWF ContTHigh
-  ;BSF LATA,PWM,0
-  ;T_PASSOS
-    ;CALL COUNT_PAS_SERVO
-   ; DECF ContTHigh,1
-   ; BTFSS STATUS,Z,0
-   ; GOTO T_PASSOS
-  ;BCF LATA,PWM,0
+  ; TODO: DEBUGGING
+  BSF LATA,2,0
+  BSF LATB,4,0
+  BSF LATB,3,0
+  BSF LATB,5,0
+  CALL POS_INICIAL_SERVO
+  MOVLW .1
+  SUBWF ContTHigh,0
+  BTFSC STATUS,Z,0
+  GOTO END_PASSOS
+  DECF ContTHigh,1
+  T_PASSOS
+    CALL COUNT_PAS_SERVO
+    DECF ContTHigh,1
+    BTFSS STATUS,Z,0
+    GOTO T_PASSOS
+  END_PASSOS
+  ; TODO: DEBUGGING
+  BCF LATA,2,0
+  BCF LATB,4,0
+  BCF LATB,3,0
+  BCF LATB,5,0
   CLRF Tics20
   RETURN
   
 ; Comprova si ha passat 1 minut d'inactivitat (60000ms = 1min)
 CHECK_TICS_MIN
+  BTFSC AUTOP_MODE,0
+  RETFIE FAST
   INCF TicsMinL,1
   BTFSC STATUS,C,0
   INCF TicsMinH,1
@@ -190,8 +262,11 @@ CHECK_TICS_SEG
   ; Ha passat 1 segon per tant canviem al mode pilot automatic
   BTFSS MANUAL_MODE,0
   RETURN
-  CLRF RECORD_MODE
-  BTG LATA,4,0 ;TODO: DEBUGGING
+  ; Si estem en mode recording, tampoc canviarem a mode pilot automatic
+  BTFSC RECORD_MODE,0
+  RETURN
+  MOVLW .1
+  MOVWF AUTOP_MODE
   RETURN
     
 ;--------------------------------------
@@ -210,11 +285,13 @@ UPDATE_SPEED
 ; Canvia el mode a manual
 CHANGE_TO_MANUAL
   SETF MANUAL_MODE
+  CALL RGB_GREEN
   GOTO ESPERA_FI_P0
 
 ; Canvia el mode a creuer
 CHANGE_TO_CRUISE
   CLRF MANUAL_MODE
+  CALL RGB_BLUE
   GOTO ESPERA_FI_P0  
 
 ; Canvia el mode del polsador manual pel corresponent (filtrant rebots)
@@ -234,11 +311,15 @@ CHANGE_MANUAL_MODE
 ; Canvia el mode a gravacio
 CHANGE_TO_RECORD
   SETF RECORD_MODE
+  CALL NETEJA_RAM
+  CLRF ContSaves
+  CALL RGB_RED
   GOTO ESPERA_FI_P1
 
 ; Canvia el mode a no gravacio
 CHANGE_TO_NO_RECORD
   CLRF RECORD_MODE
+  CALL RGB_GREEN
   GOTO ESPERA_FI_P1
   
 ; Activa i desactiva el mode de gravacio i pilot automatic (filtrant rebots)
@@ -256,7 +337,61 @@ CHANGE_RECORDING_MODE
   CLRF AUTOP_EN
   CALL UPDATE_SPEED
   RETURN
- 
+
+; Guarda la velocitat, direccio i delay si estem en el mode record
+SAVE_PARAMS
+  CALL COUNT_20ms
+  BTFSS RECORD_MODE,0
+  GOTO ESPERA_FI_P2
+  INCF ContSaves,1
+  ; Guardar velocitat
+  MOVFF VEL_ACTUAL,POSTINC0
+  ; Guardar direccio
+  MOVFF DIR_ACTUAL,POSTINC0
+  ; Guardar delay (primer Low i despres High)
+  MOVFF TicsDelayL,POSTINC0
+  MOVFF TicsDelayH,POSTINC0
+  ; Reiniciar delay
+  CALL RESET_TICS_DELAY
+  MOVLW .30
+  SUBWF ContSaves,0
+  BTFSC STATUS,Z,0
+  ; 30 saves done, so we go back to manual mode
+  CLRF RECORD_MODE
+  
+  ESPERA_FI_P2
+    BTFSS PORTB,2,0
+    GOTO ESPERA_FI_P2
+  CALL COUNT_20ms
+  RETURN
+
+;--------------------------------------
+; FUNCIONS DE CONFIGURACIONS DE LA RAM
+;--------------------------------------
+; Inicialitza la RAM a la posicio inicial on guardarem els valors 
+; dels parametres. Comença a la posicio 0 del Bank 1
+INITIAL_POSITION_RAM
+  ; Situem al Bank 1
+  MOVLW .1
+  MOVWF FSR0H,0
+  ; Situem a l'adreca 0
+  CLRF FSR0L,0
+  RETURN
+  
+
+; Neteja (posa a 0) les 128 primeres adreces del Bank 1
+; Ja que com a maxim omplirem 4@ * 30saves = 120@
+NETEJA_RAM
+  CALL INITIAL_POSITION_RAM
+  CLRF ContInstL
+  NETEJA
+    INCF ContInstL,1
+    CLRF POSTINC0,0
+    BTFSS STATUS,OV,0
+    GOTO NETEJA
+  RETURN
+
+  
 ;--------------------------------------
 ; FUNCIONS DE CONFIGURACIONS INICIALS
 ;--------------------------------------
@@ -269,15 +404,25 @@ INIT_OSC
 
 ; Inicialitza ports a utilitzar
 INIT_PORTS
-  CLRF TRISD,0
   BSF TRISA,0,0
   BSF TRISA,1,0
-  BCF TRISA,2,0
+  BCF TRISA,3,0
   BSF TRISB,0,0
   BSF TRISB,1,0
-  BCF TRISA,3,0
+  BSF TRISB,2,0
+  BCF TRISB,3,0
+  BCF TRISB,4,0
+  BCF TRISB,5,0
+  BCF TRISB,6,0
+  BCF TRISB,7,0
+  CLRF TRISC,0
+  CLRF TRISD,0
+  BCF TRISE,0,0
+  BCF TRISE,1,0
+  BCF TRISE,2,0
   BCF INTCON2,RBPU,0
   BCF TRISA,4,0 ;TODO: DEBUGGING
+  BCF TRISA,2,0 ;TODO: DEBUGGING
   RETURN
 
 ; Inicialitza variables a utilitzar
@@ -292,6 +437,8 @@ INIT_VARS
   MOVWF CONST_7SEG_0
   SETF MANUAL_MODE
   BCF LATA,3,0
+  MOVFF CONST_7SEG_0,LATD
+  CALL RGB_GREEN
   CALL RESET_TICS_MIN
   MOVLW .4
   MOVWF VEL_ACTUAL
@@ -303,7 +450,10 @@ INIT_VARS
   CLRF AUTOP_EN
   CLRF RECORD_MODE
   CLRF Tics20
-  BCF LATA,2,0
+  CALL RESET_TICS_DELAY
+  CLRF ContSaves
+  ;BCF LATA,2,0
+  BCF LATB,5,0
   RETURN
 
 ; Inicialitza ADC pel joystick (AN0 i AN1)
@@ -344,12 +494,18 @@ MAIN
   CALL INIT_TMR
   
 LOOP
+; Reprodueix ruta si estem en mode pilot automatic
+BTFSC AUTOP_MODE,0
+GOTO REPRODUIR_RUTA
 ; Consulta Polsador Manual
 BTFSS PORTB,0,0 
 CALL CHANGE_MANUAL_MODE
 ; Consulta Polsador Recording
 BTFSS PORTB,1,0
 CALL CHANGE_RECORDING_MODE
+; Consulta Polsador Save
+BTFSS PORTB,2,0
+CALL SAVE_PARAMS
 ; Check direccio
 CALL TAKE_DIRECTION 
 ; Check Mode i velocitat si Manual
@@ -529,12 +685,12 @@ TAKE_DIRECTION
   ;Per utilitzar 9 passos OUTPUT --> ADRESH rang (numero de valors) 
 			;MAX (L) --> [0,10]     (11)
 			;H (L) --> [11,46]      (36)
-			;M (L) --> [47, 82]    (36)
-			;L (L) --> [83,118]    (36)
+			;M (L) --> [47, 82]     (36)
+			;L (L) --> [83,118]     (36)
 			;S --> [119, 136]       (18)
 			;L (R) --> [137,172]    (36)
 			;M (R) --> [173,208]    (36)
-			;H (R) --> [209,244]      (36)
+			;H (R) --> [209,244]    (36)
 			;MAX (R) --> [245,255]  (11)
   
   ; Divideix in 2 parts per utilitzar el bit Negative de STATUS 
@@ -601,7 +757,9 @@ DIR_L_MAX
   MOVLW .1
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
+  ; Encenem el valor corresponent a la barra de leds
+  BSF LATC,0,0
+  BCF LATC,1,0
   MOVLW .1
   MOVWF IS_LEFT
   GOTO GO_BACK
@@ -617,7 +775,10 @@ DIR_L_HIGH
   MOVLW .2
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
+  ; Encenem el valor corresponent a la barra de leds
+  BCF LATC,0,0
+  BSF LATC,1,0
+  BCF LATC,2,0
   MOVLW .1
   MOVWF IS_LEFT
   GOTO GO_BACK
@@ -631,7 +792,10 @@ DIR_L_MID
   MOVLW .3
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
+  ; Encenem el valor corresponent a la barra de leds
+  BCF LATC,1,0
+  BSF LATC,2,0
+  BCF LATC,3,0
   MOVLW .1
   MOVWF IS_LEFT
   GOTO GO_BACK
@@ -645,7 +809,11 @@ DIR_L_LOW
   MOVLW .4
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
+  ; Encenem el valor corresponent a la barra de leds
+  BCF LATC,2,0
+  BSF LATC,3,0
+  BCF LATC,4,0
+  BCF LATC,5,0
   MOVLW .1
   MOVWF IS_LEFT
   GOTO GO_BACK
@@ -659,8 +827,11 @@ DIR_S
   MOVLW .5
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
-  BCF LATA,4,0 ;TODO: DEBUGGING
+  ; Encenem el valor corresponent a la barra de leds
+  BCF LATC,3,0
+  BSF LATC,4,0
+  BSF LATC,5,0
+  BCF LATC,6,0
   CLRF IS_LEFT
   GOTO GO_BACK
   
@@ -673,7 +844,11 @@ DIR_R_LOW
   MOVLW .6
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
+  ; Encenem el valor corresponent a la barra de leds
+  BCF LATC,4,0
+  BCF LATC,5,0
+  BSF LATC,6,0
+  BCF LATC,7,0
   CLRF IS_LEFT
   GOTO GO_BACK
   
@@ -686,7 +861,10 @@ DIR_R_MID
   MOVLW .7
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
+  ; Encenem el valor corresponent a la barra de leds
+  BCF LATC,6,0
+  BSF LATC,7,0
+  BCF LATB,3,0
   CLRF IS_LEFT
   GOTO GO_BACK
   
@@ -699,7 +877,10 @@ DIR_R_HIGH
   MOVLW .8
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
+  ; Encenem el valor corresponent a la barra de leds
+  BCF LATC,7,0
+  BSF LATB,3,0
+  BCF LATB,4,0
   CLRF IS_LEFT
   GOTO GO_BACK
   
@@ -712,11 +893,9 @@ DIR_R_MAX
   MOVLW .9
   MOVWF DIR_ACTUAL
   CALL RESET_TICS_MIN
-  ; Aqui s'encendria el valor corresponent a la barra de leds
-   BSF LATA,4,0 ;TODO: DEBUGGING
-   ;BSF LATA,2,0 ;TODO: DEBUGGING
-   ;CALL COUNT_PAS_SERVO
-   ;BCF LATA,2,0
+  ; Encenem el valor corresponent a la barra de leds
+  BCF LATB,3,0
+  BSF LATB,4,0
   CLRF IS_LEFT
   GOTO GO_BACK
 
@@ -731,6 +910,164 @@ WAIT_GO_ADC
     GOTO WAIT_ADC
   RETURN
   
+; Reprodueix una ruta guardada
+REPRODUIR_RUTA
+  CALL RGB_WHITE
+  MOVLW .0
+  SUBWF ContSaves,0
+  BTFSS STATUS,Z,0
+  GOTO FINAL_RUTA
+  
+  ; Començem a reproduir
+  MOVFF POSTINC0,VEL_ACTUAL
+  MOVFF POSTINC0,DIR_ACTUAL
+  MOVFF POSTINC0,TIME_DELAY_L
+  MOVFF POSTINC0,TIME_DELAY_H
+  ; Cridem a les funcions de direccio i velocitat
+  CALL ASSIGNA_VEL
+  CALL ASSIGNA_DIR
+  CALL RESET_TICS_DELAY
+  INCF DELAY_ESPERA_EN,1
+  ; Ens esperem a que el timer indiqui que ha passat el temps de delay
+  ESPERA_DELAY
+    BTFSC DELAY_ESPERA_EN,0
+    GOTO ESPERA_DELAY
+    
+  DECF ContSaves,1
+  GOTO REPRODUIR_RUTA
+  
+  FINAL_RUTA
+  CLRF AUTOP_MODE
+  CALL RGB_GREEN
+  GOTO LOOP
+  
+; Assigna la velocitat que li correspon al 7Seg pel AUTOP_MODE
+ASSIGNA_VEL
+  MOVLW .1
+  SUBWF VEL_ACTUAL,0
+  BTFSC STATUS,Z,0
+  CALL POSA_VEL_N_H
+  MOVLW .2
+  SUBWF VEL_ACTUAL,0
+  BTFSC STATUS,Z,0
+  CALL POSA_VEL_N_M
+  MOVLW .3
+  SUBWF VEL_ACTUAL,0
+  BTFSC STATUS,Z,0
+  CALL POSA_VEL_N_L
+  MOVLW .4
+  SUBWF VEL_ACTUAL,0
+  BTFSC STATUS,Z,0
+  MOVFF CONST_7SEG_0,LATD
+  MOVLW .5
+  SUBWF VEL_ACTUAL,0
+  BTFSC STATUS,Z,0
+  MOVFF CONST_7SEG_LOW,LATD
+  MOVLW .6
+  SUBWF VEL_ACTUAL,0
+  BTFSC STATUS,Z,0
+  MOVFF CONST_7SEG_MID,LATD
+  MOVLW .7
+  SUBWF VEL_ACTUAL,0
+  BTFSC STATUS,Z,0
+  MOVFF CONST_7SEG_HIGH,LATD
+  RETURN
+  
+; Assigna la velocitat High Negative
+POSA_VEL_N_H
+  MOVFF CONST_7SEG_HIGH,LATD
+  BSF LATA,3,0
+  RETURN
+  
+; Assigna la velocitat Mid Negative
+POSA_VEL_N_M
+  MOVFF CONST_7SEG_MID,LATD
+  BSF LATA,3,0
+  RETURN
+   
+; Assigna la velocitat Low Negative
+POSA_VEL_N_L
+  MOVFF CONST_7SEG_LOW,LATD
+  BSF LATA,3,0
+  RETURN
+  
+; Assigna la direccio que li correspon a la barra de leds pel AUTOP_MODE
+ASSIGNA_DIR
+  ; Netejem els leds
+  CLRF LATC,0
+  BCF LATB,3,0
+  BCF LATB,4,0
+  MOVLW .1
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  BSF LATC,0,0
+  MOVLW .2
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  BSF LATC,1,0
+  MOVLW .3
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  BSF LATC,2,0
+  MOVLW .4
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  BSF LATC,3,0
+  MOVLW .5
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  CALL POSA_DIR_0
+  MOVLW .6
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  BSF LATC,6,0
+  MOVLW .7
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  BSF LATC,7,0
+  MOVLW .8
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  BSF LATB,3,0
+  MOVLW .9
+  SUBWF DIR_ACTUAL,0
+  BTFSC STATUS,Z,0
+  BSF LATB,4,0
+  RETURN
+  
+; Assigna la direccio 0
+POSA_DIR_0
+  BSF LATC,4,0
+  BSF LATC,5,0
+  RETURN
+  
+; Color del led RGB vermell pel mode record
+RGB_RED
+  BCF LATE,0,0
+  BCF LATE,1,0
+  BSF LATE,2,0
+  RETURN
+  
+; Color del led RGB verd pel mode manual
+RGB_GREEN
+  BCF LATE,0,0
+  BSF LATE,1,0
+  BCF LATE,2,0
+  RETURN
+
+; Color del led RGB blau pel mode creuer
+RGB_BLUE
+  BSF LATE,0,0
+  BCF LATE,1,0
+  BCF LATE,2,0
+  RETURN
+  
+; Color del led RGB blanc pel mode pilot automatic
+RGB_WHITE
+  BSF LATE,0,0
+  BSF LATE,1,0
+  BSF LATE,2,0
+  RETURN
 ;--------------------------------------
 ; COMPTATGES D'INSTRUCCIONS
 ;--------------------------------------
@@ -758,13 +1095,32 @@ COUNT_20ms
 ; 2 + 4*X = 884 --> 2 NOP's i X = 220
 COUNT_PAS_SERVO
   MOVLW .36 ;x = 256 - 220 = 36
-  MOVWF ContPWM
+  MOVWF ContPWML
   NOP
   NOP
   T_PAS
-    INCF ContPWM,1
+    INCF ContPWML,1
     BTFSS STATUS,C,0
     GOTO T_PAS  
+  RETURN
+  
+; Compta 0,5ms corresponents a l'estat inicial del servo a 0 graus
+; TTarget = 500us | Tinst = 250ns --> #inst = 2000 - 4 = 1996
+; 4 + (4*X + 6)*Y = 1996 --> X = 256 | Y = 2
+POS_INICIAL_SERVO
+  MOVLW .0 ;x = 256 - 256 = 0
+  MOVWF ContPWML
+  MOVLW .254 ;y = 256 - 2 = 254
+  MOVWF ContPWMH
+  T_INICIAL
+    INCF ContPWML,1
+    BTFSS STATUS,C,0
+    GOTO T_INICIAL
+    MOVLW .0
+    MOVWF ContPWML
+    INCF ContPWMH,1
+    BTFSS STATUS,C,0
+    GOTO T_INICIAL
   RETURN
 	
 END
