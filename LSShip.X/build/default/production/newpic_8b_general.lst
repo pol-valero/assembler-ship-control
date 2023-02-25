@@ -1,4 +1,4 @@
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  1
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -51,13 +51,13 @@ Warning[205]: Found directive in column 1. (CONFIG)
   00000008            00030 ContInstH        EQU  0x08 
                       00031 ; Comptador per comptar 1 minut (per inactivitat)
   00000009            00032 TicsMinH         EQU  0x09
-  00000010            00033 TicsMinL         EQU  0x10
+  0000000A            00033 TicsMinL         EQU  0x0A
                       00034 ; Flag per saber si l'alarma està activa (=1) o no (=0)
-  00000011            00035 ALARM_EN         EQU  0x11
+  0000000B            00035 ALARM_EN         EQU  0x0B
                       00036 ; Comptador per comptar mig segon (pampallugues de l'alarma)
-  00000012            00037 TicsAlarmL       EQU  0x12
-  00000013            00038 TicsAlarmH       EQU  0x13
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  2
+  0000000C            00037 TicsAlarmL       EQU  0x0C
+  0000000D            00038 TicsAlarmH       EQU  0x0D
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -65,14 +65,14 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 
                       00039 ; Flag per habilitar el comptatge de temps del polsador RecordMode 
                       00040 ; de 1 segon (=1) o deshabilitar-lo (=0)
-  00000014            00041 AUTOP_EN         EQU  0x14
+  0000000E            00041 AUTOP_EN         EQU  0x0E
                       00042 ; Comptador per comptar 1 segon (pel polsador recording)
-  00000015            00043 TicsSegL         EQU  0x15
-  00000016            00044 TicsSegH         EQU  0x16
+  0000000F            00043 TicsSegL         EQU  0x0F
+  00000010            00044 TicsSegH         EQU  0x10
                       00045 ; Flag per saber si estem en mode recording (=1) o no ho estem (=0)
-  00000017            00046 RECORD_MODE      EQU  0x17
+  00000011            00046 RECORD_MODE      EQU  0x11
                       00047 ; Comptador per comptar periodes de PWM del servo (20ms)
-  00000018            00048 Tics20           EQU  0x18
+  00000012            00048 Tics20           EQU  0x12
                       00049 ; Codi dir: 1 --> Max Left
                       00050            ;2 --> High Left
                       00051            ;3 --> Mid Left
@@ -82,1246 +82,1473 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00055            ;7 --> Mid Right 
                       00056            ;8 --> High Right
                       00057            ;9 --> Max Right
-  00000019            00058 DIR_ACTUAL       EQU  0x19
+  00000013            00058 DIR_ACTUAL       EQU  0x13
                       00059 ; Flag per saber si la direccio és esquerra (=1) o dreta (=0)
-  00000020            00060 IS_LEFT          EQU  0x20
+  00000014            00060 IS_LEFT          EQU  0x14
                       00061 ; Comptador per comptar el THigh del PWM del servo
-  00000021            00062 ContTHigh        EQU  0x21
+  00000015            00062 ContTHigh        EQU  0x15
                       00063 ; Comptador per comptar el numero de passos que li toca al PWM
-  00000022            00064 ContPWML         EQU  0x22
-  00000023            00065 ContPWMH         EQU  0x23
+  00000016            00064 ContPWML         EQU  0x16
+  00000017            00065 ContPWMH         EQU  0x17
                       00066 ; Comptador per comptar el delay entre save i save de 1ms en 1ms i fins a 1min
-  00000024            00067 TicsDelayL       EQU  0x24
-  00000025            00068 TicsDelayH       EQU  0x25
+  00000018            00067 TicsDelayL       EQU  0x18
+  00000019            00068 TicsDelayH       EQU  0x19
                       00069 ; Comptador per comptar el numero de Saves que ha fet per una ruta (max 30)
-  00000026            00070 ContSaves        EQU  0x26
+  0000001A            00070 ContSaves        EQU  0x1A
                       00071 ; Flag per saber si estem en mode pilot automatic (=1) o no (=0)
-  00000027            00072 AUTOP_MODE       EQU  0x27
+  0000001B            00072 AUTOP_MODE       EQU  0x1B
                       00073 ; Flag per saber si estem fent una espera de delay en el mode automatic 
                       00074 ; (=1) o no (=0)
-  00000028            00075 DELAY_ESPERA_EN  EQU  0x28
+  0000001C            00075 DELAY_ESPERA_EN  EQU  0x1C
                       00076 ; Temps de delay que tenim entre un save i un altre
                       00077 ; El delay el treiem del que llegim a la RAM en el mode pilot automatic
-  00000029            00078 TIME_DELAY_L     EQU  0x29
-  00000030            00079 TIME_DELAY_H     EQU  0x30
-                      00080 
+  0000001D            00078 TIME_DELAY_L     EQU  0x1D
+  0000001E            00079 TIME_DELAY_H     EQU  0x1E
+                      00080 ; Temps en el que el motor DC estara configurat a HIGH 
+  0000001F            00081 T_HIGH_DC        EQU  0x1F
+                      00082 ; Temps en el que el motor DC estara configurat a LOW 
+  00000020            00083 T_LOW_DC         EQU  0x20
+                      00084 ; Flag per indicar que el PWM del motor DC esta a HIGH
+  00000021            00085 DC_IS_SET        EQU  0x21
+                      00086 ; Els Tics configurats de periode del motor DC
+  00000022            00087 TicsDC           EQU  0x22
+                      00088 
 Warning[205]: Found directive in column 1. (ORG)
-                      00081 ORG 0x0000
+                      00089 ORG 0x0000
 Warning[203]: Found opcode in column 1. (GOTO)
-000000 EF?? F???      00082 GOTO MAIN
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000000 EF?? F???      00090 GOTO MAIN
 Warning[205]: Found directive in column 1. (ORG)
-                      00083 ORG 0x0008
+                      00091 ORG 0x0008
 Warning[203]: Found opcode in column 1. (GOTO)
-000008 EF?? F???      00084 GOTO HIGH_RSI
+000008 EF?? F???      00092 GOTO HIGH_RSI
 Warning[205]: Found directive in column 1. (ORG)
-                      00085 ORG 0x0018
+                      00093 ORG 0x0018
 Warning[203]: Found opcode in column 1. (RETFIE)
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  3
+000018 0011           00094 RETFIE FAST
+                      00095 
+                      00096 ;--------------------------------------
+                      00097 ; FUNCIONS PEL TIMER
+                      00098 ;--------------------------------------
+                      00099 ; Recarrega el valor del timer per una interrupció cada 1ms
+00001A                00100 LOAD_TMR
+00001A 0EF0           00101   MOVLW HIGH(.61536)
+00001C 6ED7           00102   MOVWF TMR0H,0
+00001E 0E60           00103   MOVLW LOW(.61536)
+000020 6ED6           00104   MOVWF TMR0L,0  
+000022 0012           00105   RETURN
+                      00106 
+                      00107 ; Reseteja el comptador de 1min   
+000024                00108 RESET_TICS_MIN
+000024 6A0B           00109   CLRF ALARM_EN
+000026 6A09           00110   CLRF TicsMinH
+000028 6A0A           00111   CLRF TicsMinL
+00002A 0012           00112   RETURN
+                      00113   
+                      00114 ; Reseteja el comptador de delay entre save i save
+00002C                00115 RESET_TICS_DELAY
+00002C 6A19           00116   CLRF TicsDelayH
+00002E 6A18           00117   CLRF TicsDelayL
+000030 0012           00118   RETURN
+                      00119 
+                      00120 ; Reseteja el comptador de 1seg   
+000032                00121 RESET_TICS_SEG
+000032 680E           00122   SETF AUTOP_EN,0
+000034 6A10           00123   CLRF TicsSegH
+000036 6A0F           00124   CLRF TicsSegL
+000038 0012           00125   RETURN
+                      00126   
+                      00127 ; Reseteja el comptador de 0,5seg   
+00003A                00128 RESET_TICS_ALARM
+00003A 6A0D           00129   CLRF TicsAlarmH
+00003C 6A0C           00130   CLRF TicsAlarmL
+00003E 0012           00131   RETURN
+                      00132 
+                      00133 ; Gestiona totes les interrupcions (nomes tenim de timer)
+000040                00134 HIGH_RSI
+000040 A4F2           00135   BTFSS INTCON,TMR0IF,0
+000042 0011           00136   RETFIE FAST
+000044 94F2           00137   BCF INTCON,TMR0IF,0
+000046 EC?? F???      00138   CALL LOAD_TMR
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000018 0011           00086 RETFIE FAST
-                      00087 
-                      00088 ;--------------------------------------
-                      00089 ; FUNCIONS PEL TIMER
-                      00090 ;--------------------------------------
-                      00091 ; Recarrega el valor del timer per una interrupció cada 1ms
-00001A                00092 LOAD_TMR
-00001A 0EF0           00093   MOVLW HIGH(.61536)
-00001C 6ED7           00094   MOVWF TMR0H,0
-00001E 0E60           00095   MOVLW LOW(.61536)
-000020 6ED6           00096   MOVWF TMR0L,0  
-000022 0012           00097   RETURN
-                      00098 
-                      00099 ; Reseteja el comptador de 1min   
-000024                00100 RESET_TICS_MIN
-000024 6A11           00101   CLRF ALARM_EN
-000026 6A09           00102   CLRF TicsMinH
-000028 6A10           00103   CLRF TicsMinL
-00002A 0012           00104   RETURN
-                      00105  
-00002C                00106 RESET_TICS_DELAY
-00002C 6A09           00107   CLRF TicsMinH
-00002E 6A10           00108   CLRF TicsMinL
-000030 0012           00109   RETURN
-                      00110 
-                      00111 ; Reseteja el comptador de 1seg   
-000032                00112 RESET_TICS_SEG
-000032 2A14           00113   INCF AUTOP_EN,1
-000034 6A16           00114   CLRF TicsSegH
-000036 6A15           00115   CLRF TicsSegL
-000038 0012           00116   RETURN
-                      00117   
-                      00118 ; Reseteja el comptador de 0,5seg   
-00003A                00119 RESET_TICS_ALARM
-00003A 6A13           00120   CLRF TicsAlarmH
-00003C 6A12           00121   CLRF TicsAlarmL
-00003E 0012           00122   RETURN
-                      00123 
-                      00124 ; Gestiona totes les interrupcions (nomes tenim de timer)
-000040                00125 HIGH_RSI
-000040 A4F2           00126   BTFSS INTCON,TMR0IF,0
-000042 0011           00127   RETFIE FAST
-000044 94F2           00128   BCF INTCON,TMR0IF,0
-000046 EC?? F???      00129   CALL LOAD_TMR
-00004A EC?? F???      00130   CALL CHECK_20ms
-00004E B028           00131   BTFSC DELAY_ESPERA_EN,0,0
-000050 EC?? F???      00132   CALL CHECK_TICS_DELAY_AUTO
-000054 B017           00133   BTFSC RECORD_MODE,0,0
-000056 EC?? F???      00134   CALL CHECK_TICS_DELAY_REC
-00005A B014           00135   BTFSC AUTOP_EN,0
-00005C EC?? F???      00136   CALL CHECK_TICS_SEG
-000060 A011           00137   BTFSS ALARM_EN,0
-000062 EF?? F???      00138   GOTO CHECK_TICS_MIN
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  4
+00004A EC?? F???      00139   CALL CHECK_PWM_DC
+00004E EC?? F???      00140   CALL CHECK_20ms
+000052 B01C           00141   BTFSC DELAY_ESPERA_EN,0
+000054 EC?? F???      00142   CALL CHECK_TICS_DELAY_AUTO
+000058 B011           00143   BTFSC RECORD_MODE,0
+00005A EC?? F???      00144   CALL CHECK_TICS_DELAY_REC
+00005E B00E           00145   BTFSC AUTOP_EN,0
+000060 EC?? F???      00146   CALL CHECK_TICS_SEG
+000064 A00B           00147   BTFSS ALARM_EN,0
+000066 EF?? F???      00148   GOTO CHECK_TICS_MIN
+00006A EF?? F???      00149   GOTO MINUTE_PASSED
+                      00150 
+                      00151 ; Espera el temps de delay que se li ha assignat
+00006E                00152 CHECK_TICS_DELAY_AUTO
+00006E 2A18           00153   INCF TicsDelayL,1
+000070 B0D8           00154   BTFSC STATUS,C,0
+000072 2A19           00155   INCF TicsDelayH,1
+                      00156   ;MOVF TIME_DELAY_H,0
+000074 0E07           00157   MOVLW HIGH(.2000)
+000076 5C19           00158   SUBWF TicsDelayH,0
+000078 A4D8           00159   BTFSS STATUS,Z,0
+00007A 0012           00160   RETURN
+00007C 0ED0           00161   MOVLW LOW(.2000)
+                      00162   ;MOVF TIME_DELAY_L,0
+00007E 5C18           00163   SUBWF TicsDelayL,0
+000080 A4D8           00164   BTFSS STATUS,Z,0
+000082 0012           00165   RETURN
+                      00166   ; Ha passat el temps de delay aixi que desactivem el enable de espera
+000084 6A1C           00167   CLRF DELAY_ESPERA_EN
+000086 0012           00168   RETURN
+                      00169   
+                      00170 ; Compta el delay de Save en Save en el mode Record i avisa si ha passat 1min
+000088                00171 CHECK_TICS_DELAY_REC
+000088 2A18           00172   INCF TicsDelayL,1
+00008A B0D8           00173   BTFSC STATUS,C,0
+00008C 2A19           00174   INCF TicsDelayH,1
+00008E 0EEA           00175   MOVLW HIGH(.60000)
+000090 5C19           00176   SUBWF TicsDelayH,0
+000092 A4D8           00177   BTFSS STATUS,Z,0
+000094 0012           00178   RETURN
+000096 0E60           00179   MOVLW LOW(.60000)
+000098 5C18           00180   SUBWF TicsDelayL,0
+00009A A4D8           00181   BTFSS STATUS,Z,0
+00009C 0012           00182   RETURN
+00009E 6A11           00183   CLRF RECORD_MODE
+0000A0 EC?? F???      00184   CALL RESET_TICS_MIN
+0000A4 6805           00185   SETF MANUAL_MODE
+0000A6 EC?? F???      00186   CALL RGB_GREEN
+0000AA 0012           00187   RETURN
+                      00188 
+                      00189 ; Crea el PWM del motor DC
+0000AC                00190 CHECK_PWM_DC
+0000AC EF?? F???      00191   GOTO ASSIGN_PWM_VEL
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000066 EF?? F???      00139   GOTO MINUTE_PASSED
-                      00140 
-                      00141 ; Espera el temps de delay que se li ha assignat
-00006A                00142 CHECK_TICS_DELAY_AUTO
-00006A 2A24           00143   INCF TicsDelayL,1
-00006C B0D8           00144   BTFSC STATUS,C,0
-00006E 2A25           00145   INCF TicsDelayH,1
-000070 5230           00146   MOVF TIME_DELAY_H
-000072 5C25           00147   SUBWF TicsDelayH,0
-000074 A4D8           00148   BTFSS STATUS,Z,0
-000076 0012           00149   RETURN
-000078 5229           00150   MOVF TIME_DELAY_L
-00007A 5C24           00151   SUBWF TicsDelayL,0
-00007C A4D8           00152   BTFSS STATUS,Z,0
-00007E 0012           00153   RETURN
-                      00154   ; Ha passat el temps de delay aixi que desactivem el enable de espera
-000080 6A28           00155   CLRF DELAY_ESPERA_EN
-000082 0012           00156   RETURN
-                      00157   
-                      00158 ; Compta el delay de Save en Save en el mode Record i avisa si ha passat 1min
-000084                00159 CHECK_TICS_DELAY_REC
-000084 2A24           00160   INCF TicsDelayL,1
-000086 B0D8           00161   BTFSC STATUS,C,0
-000088 2A25           00162   INCF TicsDelayH,1
-00008A 0EEA           00163   MOVLW HIGH(.60000)
-00008C 5C25           00164   SUBWF TicsDelayH,0
-00008E A4D8           00165   BTFSS STATUS,Z,0
-000090 0012           00166   RETURN
-000092 0E60           00167   MOVLW LOW(.60000)
-000094 5C24           00168   SUBWF TicsDelayL,0
-000096 A4D8           00169   BTFSS STATUS,Z,0
-000098 0012           00170   RETURN
-00009A 6A17           00171   CLRF RECORD_MODE
-00009C EC?? F???      00172   CALL RESET_TICS_DELAY
-0000A0 0012           00173   RETURN
-                      00174 ; Comprova si ha passat 20ms (1 periode de PWM del servo)
-0000A2                00175 CHECK_20ms
-0000A2 2A18           00176   INCF Tics20,1
-0000A4 0E14           00177   MOVLW .20
-0000A6 5C18           00178   SUBWF Tics20,0
-0000A8 B4D8           00179   BTFSC STATUS,Z,0
-0000AA EC?? F???      00180   CALL NEW_SERVO_PWM
-0000AE 0012           00181   RETURN
-                      00182   
-                      00183 ; Posa el temps a 1 que marca la direccio actual 
-0000B0                00184 NEW_SERVO_PWM
-0000B0 C019 F021      00185   MOVFF DIR_ACTUAL,ContTHigh
-                      00186   ; TODO: DEBUGGING
-0000B4 8489           00187   BSF LATA,2,0
-0000B6 888A           00188   BSF LATB,4,0
-0000B8 868A           00189   BSF LATB,3,0
-0000BA 8A8A           00190   BSF LATB,5,0
-0000BC EC?? F???      00191   CALL POS_INICIAL_SERVO
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  5
+Warning[207]: Found label after column 1. (CONTINUE_VEL)
+0000B0                00192   CONTINUE_VEL
+0000B0 2A22           00193   INCF TicsDC,1
+0000B2 B021           00194   BTFSC DC_IS_SET,0
+0000B4 EF?? F???      00195   GOTO TEMPS_DC_HIGH
+0000B8 EF?? F???      00196   GOTO TEMPS_DC_LOW
+Warning[207]: Found label after column 1. (GO_BACK_DC)
+0000BC                00197   GO_BACK_DC
+0000BC 0012           00198   RETURN
+                      00199  
+                      00200 ; Assigna el periode del PWM segons la seva velocitat
+0000BE                00201 ASSIGN_PWM_VEL
+0000BE 0E01           00202   MOVLW .1
+0000C0 5C06           00203   SUBWF VEL_ACTUAL,0
+0000C2 B4D8           00204   BTFSC STATUS,Z,0
+0000C4 EF?? F???      00205   GOTO PWM_VEL_H
+0000C8 0E02           00206   MOVLW .2
+0000CA 5C06           00207   SUBWF VEL_ACTUAL,0
+0000CC B4D8           00208   BTFSC STATUS,Z,0
+0000CE EF?? F???      00209   GOTO PWM_VEL_M
+0000D2 0E03           00210   MOVLW .3
+0000D4 5C06           00211   SUBWF VEL_ACTUAL,0
+0000D6 B4D8           00212   BTFSC STATUS,Z,0
+0000D8 EF?? F???      00213   GOTO PWM_VEL_L
+0000DC 0E04           00214   MOVLW .4
+0000DE 5C06           00215   SUBWF VEL_ACTUAL,0
+0000E0 B4D8           00216   BTFSC STATUS,Z,0
+0000E2 EF?? F???      00217   GOTO PWM_VEL_0
+0000E6 0E05           00218   MOVLW .5
+0000E8 5C06           00219   SUBWF VEL_ACTUAL,0
+0000EA B4D8           00220   BTFSC STATUS,Z,0
+0000EC EF?? F???      00221   GOTO PWM_VEL_L
+0000F0 0E06           00222   MOVLW .6
+0000F2 5C06           00223   SUBWF VEL_ACTUAL,0
+0000F4 B4D8           00224   BTFSC STATUS,Z,0
+0000F6 EF?? F???      00225   GOTO PWM_VEL_M
+0000FA 0E07           00226   MOVLW .7
+0000FC 5C06           00227   SUBWF VEL_ACTUAL,0
+0000FE B4D8           00228   BTFSC STATUS,Z,0
+000100 EF?? F???      00229   GOTO PWM_VEL_H
+                      00230 
+                      00231 ; Assigna el periode de PWM de velocitat low en el motor DC
+000104                00232 PWM_VEL_L
+000104 0E01           00233   MOVLW .1
+000106 6E1F           00234   MOVWF T_HIGH_DC
+000108 0E04           00235   MOVLW .4
+00010A 6E20           00236   MOVWF T_LOW_DC
+00010C EF?? F???      00237   GOTO CONTINUE_VEL
+                      00238   
+                      00239 ; Assigna el periode de PWM de velocitat mid en el motor DC
+000110                00240 PWM_VEL_M
+000110 0E02           00241   MOVLW .2
+000112 6E1F           00242   MOVWF T_HIGH_DC
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0000C0 0E01           00192   MOVLW .1
-0000C2 5C21           00193   SUBWF ContTHigh,0
-0000C4 B4D8           00194   BTFSC STATUS,Z,0
-0000C6 EF?? F???      00195   GOTO END_PASSOS
-0000CA 0621           00196   DECF ContTHigh,1
+000114 0E03           00243   MOVLW .3
+000116 6E20           00244   MOVWF T_LOW_DC
+000118 EF?? F???      00245   GOTO CONTINUE_VEL
+                      00246   
+                      00247 ; Assigna el periode de PWM de velocitat high en el motor DC
+00011C                00248 PWM_VEL_H
+00011C EC?? F???      00249   CALL ACTIVA_PORT_DC
+000120 EF?? F???      00250   GOTO GO_BACK_DC
+                      00251  
+                      00252 ; Assigna el periode de PWM de velocitat 0 en el motor DC
+000124                00253 PWM_VEL_0
+000124 9C8A           00254   BCF LATB,6,0
+000126 9E8A           00255   BCF LATB,7,0
+000128 EF?? F???      00256   GOTO GO_BACK_DC
+                      00257 
+                      00258 ; Activa el pin del PWM del motor DC segons si la velocitat es negativa o no
+00012C                00259 ACTIVA_PORT_DC
+00012C A004           00260   BTFSS IS_NEGATIVE,0
+00012E EC?? F???      00261   CALL ACTIVA_RB6
+000132 B004           00262   BTFSC IS_NEGATIVE,0
+000134 EC?? F???      00263   CALL ACTIVA_RB7
+000138 0012           00264   RETURN
+                      00265  
+                      00266 ; Activa el pin RB6 (pel PWM del motor DC)
+00013A                00267 ACTIVA_RB6
+00013A 8C8A           00268   BSF LATB,6,0
+00013C 9E8A           00269   BCF LATB,7,0
+00013E 0012           00270   RETURN
+                      00271   
+                      00272 ; Activa el pin RB7 (pel PWM del motor DC)
+000140                00273 ACTIVA_RB7
+000140 9C8A           00274   BCF LATB,6,0
+000142 8E8A           00275   BSF LATB,7,0
+000144 0012           00276   RETURN
+                      00277   
+                      00278 ; Desactiva el pin del PWM del motor DC segons si la velocitat es negativa o no
+000146                00279 DESACTIVA_PORT_DC
+000146 A004           00280   BTFSS IS_NEGATIVE,0
+000148 9C8A           00281   BCF LATB,6,0
+00014A B004           00282   BTFSC IS_NEGATIVE,0
+00014C 9E8A           00283   BCF LATB,7,0
+00014E 0012           00284   RETURN
+                      00285  
+                      00286 ; Periode de temps que el motor DC estara apagat
+000150                00287 TEMPS_DC_LOW  
+000150 5020           00288   MOVF T_LOW_DC,0
+000152 5C22           00289   SUBWF TicsDC,0
+000154 A4D8           00290   BTFSS STATUS,Z,0
+000156 EF?? F???      00291   GOTO GO_BACK_DC
+00015A EC?? F???      00292   CALL ACTIVA_PORT_DC
+00015E 6A22           00293   CLRF TicsDC
+000160 6821           00294   SETF DC_IS_SET,0
+000162 EF?? F???      00295   GOTO GO_BACK_DC
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00296  
+                      00297 ; Periode de temps que el motor DC estara ences  
+000166                00298 TEMPS_DC_HIGH
+000166 501F           00299   MOVF T_HIGH_DC,0
+000168 5C22           00300   SUBWF TicsDC,0
+00016A A4D8           00301   BTFSS STATUS,Z,0
+00016C EF?? F???      00302   GOTO GO_BACK_DC
+000170 6A22           00303   CLRF TicsDC
+000172 EC?? F???      00304   CALL DESACTIVA_PORT_DC
+000176 6A21           00305   CLRF DC_IS_SET,0
+000178 EF?? F???      00306   GOTO GO_BACK_DC
+                      00307   
+                      00308 ; Comprova si ha passat 20ms (1 periode de PWM del servo)
+00017C                00309 CHECK_20ms
+00017C 2A12           00310   INCF Tics20,1
+00017E 0E14           00311   MOVLW .20
+000180 5C12           00312   SUBWF Tics20,0
+000182 B4D8           00313   BTFSC STATUS,Z,0
+000184 EC?? F???      00314   CALL NEW_SERVO_PWM
+000188 0012           00315   RETURN
+                      00316   
+                      00317 ; Posa el temps a 1 que marca la direccio actual 
+00018A                00318 NEW_SERVO_PWM
+00018A C013 F015      00319   MOVFF DIR_ACTUAL,ContTHigh
+00018E 8489           00320   BSF LATA,2,0
+000190 EC?? F???      00321   CALL POS_INICIAL_SERVO
+000194 0E01           00322   MOVLW .1
+000196 5C15           00323   SUBWF ContTHigh,0
+000198 B4D8           00324   BTFSC STATUS,Z,0
+00019A EF?? F???      00325   GOTO END_PASSOS
+00019E 0615           00326   DECF ContTHigh,1
 Warning[207]: Found label after column 1. (T_PASSOS)
-0000CC                00197   T_PASSOS
-0000CC EC?? F???      00198     CALL COUNT_PAS_SERVO
-0000D0 0621           00199     DECF ContTHigh,1
-0000D2 A4D8           00200     BTFSS STATUS,Z,0
-0000D4 EF?? F???      00201     GOTO T_PASSOS
+0001A0                00327   T_PASSOS
+0001A0 EC?? F???      00328     CALL COUNT_PAS_SERVO
+0001A4 0615           00329     DECF ContTHigh,1
+0001A6 A4D8           00330     BTFSS STATUS,Z,0
+0001A8 EF?? F???      00331     GOTO T_PASSOS
 Warning[207]: Found label after column 1. (END_PASSOS)
-0000D8                00202   END_PASSOS
-                      00203   ; TODO: DEBUGGING
-0000D8 9489           00204   BCF LATA,2,0
-0000DA 988A           00205   BCF LATB,4,0
-0000DC 968A           00206   BCF LATB,3,0
-0000DE 9A8A           00207   BCF LATB,5,0
-0000E0 6A18           00208   CLRF Tics20
-0000E2 0012           00209   RETURN
-                      00210   
-                      00211 ; Comprova si ha passat 1 minut d'inactivitat (60000ms = 1min)
-0000E4                00212 CHECK_TICS_MIN
-0000E4 B027           00213   BTFSC AUTOP_MODE,0
-0000E6 0011           00214   RETFIE FAST
-0000E8 2A10           00215   INCF TicsMinL,1
-0000EA B0D8           00216   BTFSC STATUS,C,0
-0000EC 2A09           00217   INCF TicsMinH,1
-0000EE 0EEA           00218   MOVLW HIGH(.60000)
-0000F0 5C09           00219   SUBWF TicsMinH,0
-0000F2 A4D8           00220   BTFSS STATUS,Z,0
-0000F4 0011           00221   RETFIE FAST
-0000F6 0E60           00222   MOVLW LOW(.60000)
-0000F8 5C10           00223   SUBWF TicsMinL,0
-0000FA A4D8           00224   BTFSS STATUS,Z,0
-0000FC 0011           00225   RETFIE FAST
-                      00226 ; Aqui ha passat 1min
+0001AC                00332   END_PASSOS
+0001AC 9489           00333   BCF LATA,2,0
+0001AE 6A12           00334   CLRF Tics20
+0001B0 0012           00335   RETURN
+                      00336   
+                      00337 ; Comprova si ha passat 1 minut d'inactivitat (60000ms = 1min)
+0001B2                00338 CHECK_TICS_MIN
+0001B2 B01B           00339   BTFSC AUTOP_MODE,0
+0001B4 0011           00340   RETFIE FAST
+0001B6 2A0A           00341   INCF TicsMinL,1
+0001B8 B0D8           00342   BTFSC STATUS,C,0
+0001BA 2A09           00343   INCF TicsMinH,1
+0001BC 0EEA           00344   MOVLW HIGH(.60000)
+0001BE 5C09           00345   SUBWF TicsMinH,0
+0001C0 A4D8           00346   BTFSS STATUS,Z,0
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0001C2 0011           00347   RETFIE FAST
+0001C4 0E60           00348   MOVLW LOW(.60000)
+0001C6 5C0A           00349   SUBWF TicsMinL,0
+0001C8 A4D8           00350   BTFSS STATUS,Z,0
+0001CA 0011           00351   RETFIE FAST
+                      00352 ; Aqui ha passat 1min
 Warning[203]: Found opcode in column 1. (MOVLW)
-0000FE 0E01           00227 MOVLW .1
+0001CC 0E01           00353 MOVLW .1
 Warning[203]: Found opcode in column 1. (MOVWF)
-000100 6E11           00228 MOVWF ALARM_EN
+0001CE 6E0B           00354 MOVWF ALARM_EN
 Warning[203]: Found opcode in column 1. (BSF)
-000102 8689           00229 BSF LATA,3,0
+0001D0 8689           00355 BSF LATA,3,0
 Warning[203]: Found opcode in column 1. (CALL)
-000104 EC?? F???      00230 CALL RESET_TICS_ALARM
-                      00231 
-                      00232 ; Activa l'alarma fent pampallugues canviant cada 0,5seg el led (500ms = 0,5seg)
-000108                00233 MINUTE_PASSED
-000108 2A12           00234   INCF TicsAlarmL,1
-00010A B0D8           00235   BTFSC STATUS,C,0
-00010C 2A13           00236   INCF TicsAlarmH,1
-00010E 0E01           00237   MOVLW HIGH(.500)
-000110 5C13           00238   SUBWF TicsAlarmH,0
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  6
+0001D2 EC?? F???      00356 CALL RESET_TICS_ALARM
+                      00357 
+                      00358 ; Activa l'alarma fent pampallugues canviant cada 0,5seg el led (500ms = 0,5seg)
+0001D6                00359 MINUTE_PASSED
+0001D6 2A0C           00360   INCF TicsAlarmL,1
+0001D8 B0D8           00361   BTFSC STATUS,C,0
+0001DA 2A0D           00362   INCF TicsAlarmH,1
+0001DC 0E01           00363   MOVLW HIGH(.500)
+0001DE 5C0D           00364   SUBWF TicsAlarmH,0
+0001E0 A4D8           00365   BTFSS STATUS,Z,0
+0001E2 0011           00366   RETFIE FAST
+0001E4 0EF4           00367   MOVLW LOW(.500)
+0001E6 5C0C           00368   SUBWF TicsAlarmL,0
+0001E8 A4D8           00369   BTFSS STATUS,Z,0
+0001EA 0011           00370   RETFIE FAST
+0001EC 7689           00371   BTG LATA,3,0
+0001EE EC?? F???      00372   CALL RESET_TICS_ALARM
+0001F2 0011           00373   RETFIE FAST
+                      00374 
+                      00375 ; Comprova si el polsador Record ha passat 1 segon polsat
+0001F4                00376 CHECK_TICS_SEG
+0001F4 2A0F           00377   INCF TicsSegL,1
+0001F6 B0D8           00378   BTFSC STATUS,C,0
+0001F8 2A10           00379   INCF TicsSegH,1
+0001FA 0E03           00380   MOVLW HIGH(.1000)
+0001FC 5C10           00381   SUBWF TicsSegH,0
+0001FE A4D8           00382   BTFSS STATUS,Z,0
+000200 0012           00383   RETURN
+000202 0EE8           00384   MOVLW LOW(.1000)
+000204 5C0F           00385   SUBWF TicsSegL,0
+000206 A4D8           00386   BTFSS STATUS,Z,0
+000208 0012           00387   RETURN
+                      00388   ; Ha passat 1 segon per tant canviem al mode pilot automatic
+00020A A005           00389   BTFSS MANUAL_MODE,0
+00020C 0012           00390   RETURN
+                      00391   ; Si estem canviant de mode a recording a manual, ignorem la pulsacio
+00020E B011           00392   BTFSC RECORD_MODE,0
+000210 0012           00393   RETURN
+                      00394   ; Si no hem guardat res, no canviem al mode pilot automatic
+000212 0E00           00395   MOVLW .0
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000112 A4D8           00239   BTFSS STATUS,Z,0
-000114 0011           00240   RETFIE FAST
-000116 0EF4           00241   MOVLW LOW(.500)
-000118 5C12           00242   SUBWF TicsAlarmL,0
-00011A A4D8           00243   BTFSS STATUS,Z,0
-00011C 0011           00244   RETFIE FAST
-00011E 7689           00245   BTG LATA,3,0
-000120 EC?? F???      00246   CALL RESET_TICS_ALARM
-000124 0011           00247   RETFIE FAST
-                      00248 
-                      00249 ; Comprova si el polsador Record ha passat 1 segon polsat
-000126                00250 CHECK_TICS_SEG
-000126 2A15           00251   INCF TicsSegL,1
-000128 B0D8           00252   BTFSC STATUS,C,0
-00012A 2A16           00253   INCF TicsSegH,1
-00012C 0E03           00254   MOVLW HIGH(.1000)
-00012E 5C16           00255   SUBWF TicsSegH,0
-000130 A4D8           00256   BTFSS STATUS,Z,0
-000132 0012           00257   RETURN
-000134 0EE8           00258   MOVLW LOW(.1000)
-000136 5C15           00259   SUBWF TicsSegL,0
-000138 A4D8           00260   BTFSS STATUS,Z,0
-00013A 0012           00261   RETURN
-                      00262   ; Ha passat 1 segon per tant canviem al mode pilot automatic
-00013C A005           00263   BTFSS MANUAL_MODE,0
-00013E 0012           00264   RETURN
-                      00265   ; Si estem en mode recording, tampoc canviarem a mode pilot automatic
-000140 B017           00266   BTFSC RECORD_MODE,0
-000142 0012           00267   RETURN
-000144 0E01           00268   MOVLW .1
-000146 6E27           00269   MOVWF AUTOP_MODE
-000148 0012           00270   RETURN
-                      00271     
-                      00272 ;--------------------------------------
-                      00273 ; FUNCIONS PELS POLSADORS (per polling)
-                      00274 ;--------------------------------------
-                      00275 ; Actualitza el led de velocitat negativa
-00014A                00276 UPDATE_SPEED
-00014A 0E04           00277   MOVLW .4
-00014C 5C06           00278   SUBWF VEL_ACTUAL,0
-00014E A8D8           00279   BTFSS STATUS,N,0
-000150 9689           00280   BCF LATA,3,0
-000152 B8D8           00281   BTFSC STATUS,N,0
-000154 8689           00282   BSF LATA,3,0
-000156 0012           00283   RETURN
-                      00284 
-                      00285 ; Canvia el mode a manual
-000158                00286 CHANGE_TO_MANUAL
-000158 6805           00287   SETF MANUAL_MODE
-00015A EC?? F???      00288   CALL RGB_GREEN
-00015E EF?? F???      00289   GOTO ESPERA_FI_P0
-                      00290 
-                      00291 ; Canvia el mode a creuer
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  7
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-000162                00292 CHANGE_TO_CRUISE
-000162 6A05           00293   CLRF MANUAL_MODE
-000164 EC?? F???      00294   CALL RGB_BLUE
-000168 EF?? F???      00295   GOTO ESPERA_FI_P0  
-                      00296 
-                      00297 ; Canvia el mode del polsador manual pel corresponent (filtrant rebots)
-00016C                00298 CHANGE_MANUAL_MODE
-00016C EC?? F???      00299   CALL COUNT_20ms
-000170 EC?? F???      00300   CALL RESET_TICS_MIN
-000174 A005           00301   BTFSS MANUAL_MODE,0
-000176 EF?? F???      00302   GOTO CHANGE_TO_MANUAL
-00017A EF?? F???      00303   GOTO CHANGE_TO_CRUISE
+000214 5C1A           00396   SUBWF ContSaves,0
+000216 B4D8           00397   BTFSC STATUS,Z,0
+000218 0012           00398   RETURN
+00021A 681B           00399   SETF AUTOP_MODE,0
+00021C EC?? F???      00400   CALL RGB_WHITE
+000220 EC?? F???      00401   CALL INITIAL_POSITION_RAM
+000224 0012           00402   RETURN
+                      00403     
+                      00404 ;--------------------------------------
+                      00405 ; FUNCIONS PELS POLSADORS (per polling)
+                      00406 ;--------------------------------------
+                      00407 ; Actualitza el led de velocitat negativa
+000226                00408 UPDATE_SPEED
+000226 0E04           00409   MOVLW .4
+000228 5C06           00410   SUBWF VEL_ACTUAL,0
+00022A A8D8           00411   BTFSS STATUS,N,0
+00022C 9689           00412   BCF LATA,3,0
+00022E B8D8           00413   BTFSC STATUS,N,0
+000230 8689           00414   BSF LATA,3,0
+000232 0012           00415   RETURN
+                      00416 
+                      00417 ; Canvia el mode a manual
+000234                00418 CHANGE_TO_MANUAL
+000234 6805           00419   SETF MANUAL_MODE
+000236 EC?? F???      00420   CALL RGB_GREEN
+00023A EF?? F???      00421   GOTO ESPERA_FI_P0
+                      00422 
+                      00423 ; Canvia el mode a creuer
+00023E                00424 CHANGE_TO_CRUISE
+00023E 6A05           00425   CLRF MANUAL_MODE
+000240 EC?? F???      00426   CALL RGB_BLUE
+000244 EF?? F???      00427   GOTO ESPERA_FI_P0  
+                      00428 
+                      00429 ; Canvia el mode del polsador manual pel corresponent (filtrant rebots)
+000248                00430 CHANGE_MANUAL_MODE
+000248 EC?? F???      00431   CALL COUNT_20ms
+00024C B011           00432   BTFSC RECORD_MODE,0
+00024E EF?? F???      00433   GOTO ESPERA_FI_P0
+000252 EC?? F???      00434   CALL RESET_TICS_MIN
+000256 A005           00435   BTFSS MANUAL_MODE,0
+000258 EF?? F???      00436   GOTO CHANGE_TO_MANUAL
+00025C EF?? F???      00437   GOTO CHANGE_TO_CRUISE
 Warning[207]: Found label after column 1. (ESPERA_FI_P0)
-00017E                00304   ESPERA_FI_P0
-00017E A081           00305     BTFSS PORTB,0,0
-000180 EF?? F???      00306     GOTO ESPERA_FI_P0
-000184 EC?? F???      00307   CALL COUNT_20ms
-000188 EC?? F???      00308   CALL UPDATE_SPEED
-00018C 0012           00309   RETURN
-                      00310 
-                      00311 ; Canvia el mode a gravacio
-00018E                00312 CHANGE_TO_RECORD
-00018E 6817           00313   SETF RECORD_MODE
-000190 EC?? F???      00314   CALL NETEJA_RAM
-000194 6A26           00315   CLRF ContSaves
-000196 EC?? F???      00316   CALL RGB_RED
-00019A EF?? F???      00317   GOTO ESPERA_FI_P1
-                      00318 
-                      00319 ; Canvia el mode a no gravacio
-00019E                00320 CHANGE_TO_NO_RECORD
-00019E 6A17           00321   CLRF RECORD_MODE
-0001A0 EC?? F???      00322   CALL RGB_GREEN
-0001A4 EF?? F???      00323   GOTO ESPERA_FI_P1
-                      00324   
-                      00325 ; Activa i desactiva el mode de gravacio i pilot automatic (filtrant rebots)
-0001A8                00326 CHANGE_RECORDING_MODE
-0001A8 EC?? F???      00327   CALL COUNT_20ms
-0001AC EC?? F???      00328   CALL RESET_TICS_MIN
-0001B0 EC?? F???      00329   CALL RESET_TICS_SEG
-0001B4 A017           00330   BTFSS RECORD_MODE,0
-0001B6 EF?? F???      00331   GOTO CHANGE_TO_RECORD
-0001BA EF?? F???      00332   GOTO CHANGE_TO_NO_RECORD
+000260                00438   ESPERA_FI_P0
+000260 A081           00439     BTFSS PORTB,0,0
+000262 EF?? F???      00440     GOTO ESPERA_FI_P0
+000266 EC?? F???      00441   CALL COUNT_20ms
+00026A EC?? F???      00442   CALL UPDATE_SPEED
+00026E 0012           00443   RETURN
+                      00444 
+                      00445 ; Canvia el mode a gravacio
+000270                00446 CHANGE_TO_RECORD
+000270 6811           00447   SETF RECORD_MODE
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000272 EC?? F???      00448   CALL NETEJA_RAM
+000276 EC?? F???      00449   CALL INITIAL_POSITION_RAM
+00027A EC?? F???      00450   CALL RESET_TICS_DELAY
+00027E 6A1A           00451   CLRF ContSaves
+000280 EC?? F???      00452   CALL RGB_RED
+000284 EF?? F???      00453   GOTO FINAL_P1
+                      00454 
+                      00455 ; Canvia el mode a no gravacio
+000288                00456 CHANGE_TO_NO_RECORD
+000288 6A11           00457   CLRF RECORD_MODE
+00028A EC?? F???      00458   CALL RGB_GREEN
+00028E 6805           00459   SETF MANUAL_MODE,0
+000290 EF?? F???      00460   GOTO FINAL_P1
+                      00461   
+                      00462 ; Activa i desactiva el mode de gravacio i pilot automatic (filtrant rebots)
+                      00463 ; Es canvia de mode quan deixem anar el polsador
+000294                00464 CHANGE_RECORDING_MODE
+000294 EC?? F???      00465   CALL COUNT_20ms
+000298 A005           00466   BTFSS MANUAL_MODE,0
+00029A 0012           00467   RETURN
+00029C EC?? F???      00468   CALL RESET_TICS_MIN
+0002A0 EC?? F???      00469   CALL RESET_TICS_SEG
+0002A4 EC?? F???      00470   CALL UPDATE_SPEED
 Warning[207]: Found label after column 1. (ESPERA_FI_P1)
-0001BE                00333   ESPERA_FI_P1
-0001BE A281           00334     BTFSS PORTB,1,0
-0001C0 EF?? F???      00335     GOTO ESPERA_FI_P1
-0001C4 EC?? F???      00336   CALL COUNT_20ms
-0001C8 6A14           00337   CLRF AUTOP_EN
-0001CA EC?? F???      00338   CALL UPDATE_SPEED
-0001CE 0012           00339   RETURN
-                      00340 
-                      00341 ; Guarda la velocitat, direccio i delay si estem en el mode record
-0001D0                00342 SAVE_PARAMS
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  8
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-0001D0 EC?? F???      00343   CALL COUNT_20ms
-0001D4 A017           00344   BTFSS RECORD_MODE,0
-0001D6 EF?? F???      00345   GOTO ESPERA_FI_P2
-0001DA 2A26           00346   INCF ContSaves,1
-                      00347   ; Guardar velocitat
-0001DC C006 FFEE      00348   MOVFF VEL_ACTUAL,POSTINC0
-                      00349   ; Guardar direccio
-0001E0 C019 FFEE      00350   MOVFF DIR_ACTUAL,POSTINC0
-                      00351   ; Guardar delay (primer Low i despres High)
-0001E4 C024 FFEE      00352   MOVFF TicsDelayL,POSTINC0
-0001E8 C025 FFEE      00353   MOVFF TicsDelayH,POSTINC0
-                      00354   ; Reiniciar delay
-0001EC EC?? F???      00355   CALL RESET_TICS_DELAY
-0001F0 0E1E           00356   MOVLW .30
-0001F2 5C26           00357   SUBWF ContSaves,0
-0001F4 B4D8           00358   BTFSC STATUS,Z,0
-                      00359   ; 30 saves done, so we go back to manual mode
-0001F6 6A17           00360   CLRF RECORD_MODE
-                      00361   
-Warning[207]: Found label after column 1. (ESPERA_FI_P2)
-0001F8                00362   ESPERA_FI_P2
-0001F8 A481           00363     BTFSS PORTB,2,0
-0001FA EF?? F???      00364     GOTO ESPERA_FI_P2
-0001FE EC?? F???      00365   CALL COUNT_20ms
-000202 0012           00366   RETURN
-                      00367 
-                      00368 ;--------------------------------------
-                      00369 ; FUNCIONS DE CONFIGURACIONS DE LA RAM
-                      00370 ;--------------------------------------
-                      00371 ; Inicialitza la RAM a la posicio inicial on guardarem els valors 
-                      00372 ; dels parametres. Comença a la posicio 0 del Bank 1
-000204                00373 INITIAL_POSITION_RAM
-                      00374   ; Situem al Bank 1
-000204 0E01           00375   MOVLW .1
-000206 6EEA           00376   MOVWF FSR0H,0
-                      00377   ; Situem a l'adreca 0
-000208 6AE9           00378   CLRF FSR0L,0
-00020A 0012           00379   RETURN
-                      00380   
-                      00381 
-                      00382 ; Neteja (posa a 0) les 128 primeres adreces del Bank 1
-                      00383 ; Ja que com a maxim omplirem 4@ * 30saves = 120@
-00020C                00384 NETEJA_RAM
-00020C EC?? F???      00385   CALL INITIAL_POSITION_RAM
-000210 6A07           00386   CLRF ContInstL
-Warning[207]: Found label after column 1. (NETEJA)
-000212                00387   NETEJA
-000212 2A07           00388     INCF ContInstL,1
-000214 6AEE           00389     CLRF POSTINC0,0
-000216 A6D8           00390     BTFSS STATUS,OV,0
-000218 EF?? F???      00391     GOTO NETEJA
-00021C 0012           00392   RETURN
-                      00393 
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE  9
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-                      00394   
-                      00395 ;--------------------------------------
-                      00396 ; FUNCIONS DE CONFIGURACIONS INICIALS
-                      00397 ;--------------------------------------
-                      00398 ; Config OSC per tenir F=16MHz
-00021E                00399 INIT_OSC
-00021E 0E60           00400   MOVLW b'01100000'
-000220 6ED3           00401   MOVWF OSCCON,0
-000222 8C9B           00402   BSF OSCTUNE,PLLEN,0
-000224 0012           00403   RETURN
-                      00404 
-                      00405 ; Inicialitza ports a utilitzar
-000226                00406 INIT_PORTS
-000226 8092           00407   BSF TRISA,0,0
-000228 8292           00408   BSF TRISA,1,0
-00022A 9692           00409   BCF TRISA,3,0
-00022C 8093           00410   BSF TRISB,0,0
-00022E 8293           00411   BSF TRISB,1,0
-000230 8493           00412   BSF TRISB,2,0
-000232 9693           00413   BCF TRISB,3,0
-000234 9893           00414   BCF TRISB,4,0
-000236 9A93           00415   BCF TRISB,5,0
-000238 9C93           00416   BCF TRISB,6,0
-00023A 9E93           00417   BCF TRISB,7,0
-00023C 6A94           00418   CLRF TRISC,0
-00023E 6A95           00419   CLRF TRISD,0
-000240 9096           00420   BCF TRISE,0,0
-000242 9296           00421   BCF TRISE,1,0
-000244 9496           00422   BCF TRISE,2,0
-000246 9EF1           00423   BCF INTCON2,RBPU,0
-000248 9892           00424   BCF TRISA,4,0 ;TODO: DEBUGGING
-00024A 9492           00425   BCF TRISA,2,0 ;TODO: DEBUGGING
-00024C 0012           00426   RETURN
-                      00427 
-                      00428 ; Inicialitza variables a utilitzar
-00024E                00429 INIT_VARS
-00024E 0E37           00430   MOVLW b'00110111'
-000250 6E00           00431   MOVWF CONST_7SEG_HIGH
-000252 0E75           00432   MOVLW b'01110101'
-000254 6E01           00433   MOVWF CONST_7SEG_MID
-000256 0E0D           00434   MOVLW b'00001101'
-000258 6E02           00435   MOVWF CONST_7SEG_LOW
-00025A 0E7D           00436   MOVLW b'01111101'
-00025C 6E03           00437   MOVWF CONST_7SEG_0
-00025E 6805           00438   SETF MANUAL_MODE
-000260 9689           00439   BCF LATA,3,0
-000262 C003 FF8C      00440   MOVFF CONST_7SEG_0,LATD
-000266 EC?? F???      00441   CALL RGB_GREEN
-00026A EC?? F???      00442   CALL RESET_TICS_MIN
-00026E 0E04           00443   MOVLW .4
-000270 6E06           00444   MOVWF VEL_ACTUAL
-000272 0E05           00445   MOVLW .5
-000274 6E19           00446   MOVWF DIR_ACTUAL
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 10
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-000276 6A11           00447   CLRF ALARM_EN
-000278 6A04           00448   CLRF IS_NEGATIVE
-00027A 9889           00449   BCF LATA,4,0 ;TODO: DEBUGGING
-00027C 6A14           00450   CLRF AUTOP_EN
-00027E 6A17           00451   CLRF RECORD_MODE
-000280 6A18           00452   CLRF Tics20
-000282 EC?? F???      00453   CALL RESET_TICS_DELAY
-000286 6A26           00454   CLRF ContSaves
-                      00455   ;BCF LATA,2,0
-000288 9A8A           00456   BCF LATB,5,0
-00028A 0012           00457   RETURN
-                      00458 
-                      00459 ; Inicialitza ADC pel joystick (AN0 i AN1)
-00028C                00460 INIT_ADC
-                      00461   ;Analog OUT (AN0 & AN1) i deshabilita Vref
-00028C 0E0D           00462   MOVLW b'00001101'
-00028E 6EC1           00463   MOVWF ADCON1,0
-                      00464   ;Clear ADCON2
-000290 6AC0           00465   CLRF ADCON2,0
-                      00466   ;Enable ADC i selecciona Channel 0
-000292 0E01           00467   MOVLW b'00000001'
-000294 6EC2           00468   MOVWF ADCON0,0
-000296 0012           00469   RETURN
-                      00470 
-                      00471 ; Inicialitza les interrupcions a utilitzar (nomes la del timer)
-000298                00472 INIT_IRQS
-000298 9ED0           00473   BCF RCON,IPEN,0
-00029A 0EC0           00474   MOVLW b'11000000'
-00029C 6EF2           00475   MOVWF INTCON,0
-00029E 0012           00476   RETURN
-                      00477 
-                      00478 ; Inicialitza el timer a utilitzar (TIMER0)
-0002A0                00479 INIT_TMR
-0002A0 0E8F           00480   MOVLW b'10001111'
-0002A2 6ED5           00481   MOVWF T0CON,0
-0002A4 8AF2           00482   BSF INTCON,TMR0IE,0
-0002A6 0012           00483   RETURN
+0002A8                00471   ESPERA_FI_P1
+0002A8 A281           00472     BTFSS PORTB,1,0
+0002AA EF?? F???      00473     GOTO ESPERA_FI_P1
+0002AE EC?? F???      00474   CALL COUNT_20ms
+0002B2 6A0E           00475   CLRF AUTOP_EN
+                      00476   ; Si s'ha activat el mode pilot automatic, no canviem de mode de gravacio
+0002B4 B01B           00477   BTFSC AUTOP_MODE,0
+0002B6 0012           00478   RETURN
+0002B8 A011           00479   BTFSS RECORD_MODE,0
+0002BA EF?? F???      00480   GOTO CHANGE_TO_RECORD
+0002BE EF?? F???      00481   GOTO CHANGE_TO_NO_RECORD
+Warning[207]: Found label after column 1. (FINAL_P1)
+0002C2                00482   FINAL_P1
+0002C2 0012           00483   RETURN
                       00484 
-                      00485 ;--------------------------------------
-                      00486 ; MAIN I LOOP DEL PROGRAMA
-                      00487 ;--------------------------------------
-0002A8                00488 MAIN
-0002A8 EC?? F???      00489   CALL INIT_OSC
-0002AC EC?? F???      00490   CALL INIT_PORTS
-0002B0 EC?? F???      00491   CALL INIT_VARS
-0002B4 EC?? F???      00492   CALL INIT_ADC
-0002B8 EC?? F???      00493   CALL INIT_IRQS
-0002BC EC?? F???      00494   CALL INIT_TMR
-                      00495   
-0002C0                00496 LOOP
-                      00497 ; Reprodueix ruta si estem en mode pilot automatic
-Warning[203]: Found opcode in column 1. (BTFSC)
-0002C0 B027           00498 BTFSC AUTOP_MODE,0
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 11
+                      00485 ; Guarda la velocitat, direccio i delay si estem en el mode record
+0002C4                00486 SAVE_PARAMS
+0002C4 EC?? F???      00487   CALL COUNT_20ms
+0002C8 A011           00488   BTFSS RECORD_MODE,0
+0002CA EF?? F???      00489   GOTO ESPERA_FI_P2
+0002CE 2A1A           00490   INCF ContSaves,1
+                      00491   ; Guardar velocitat
+0002D0 C006 FFEE      00492   MOVFF VEL_ACTUAL,POSTINC0
+                      00493   ; Guardar direccio
+0002D4 C013 FFEE      00494   MOVFF DIR_ACTUAL,POSTINC0
+                      00495   ; Guardar delay (primer Low i despres High)
+0002D8 C018 FFEE      00496   MOVFF TicsDelayL,POSTINC0
+0002DC C019 FFEE      00497   MOVFF TicsDelayH,POSTINC0
+                      00498   ; Reiniciar delay
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0002E0 EC?? F???      00499   CALL RESET_TICS_DELAY
+0002E4 EC?? F???      00500   CALL RESET_TICS_MIN
+0002E8 0E1E           00501   MOVLW .30
+0002EA 5C1A           00502   SUBWF ContSaves,0
+0002EC B4D8           00503   BTFSC STATUS,Z,0
+0002EE EF?? F???      00504   GOTO SAVES_30
+Warning[207]: Found label after column 1. (ESPERA_FI_P2)
+0002F2                00505   ESPERA_FI_P2
+0002F2 A481           00506     BTFSS PORTB,2,0
+0002F4 EF?? F???      00507     GOTO ESPERA_FI_P2
+0002F8 EC?? F???      00508   CALL COUNT_20ms
+0002FC 0012           00509   RETURN
+                      00510 
+                      00511 ; Tornem al mode manual perque s'han fet 30 saves (el maxim)
+0002FE                00512 SAVES_30
+0002FE 6A11           00513   CLRF RECORD_MODE
+000300 EC?? F???      00514   CALL RGB_GREEN
+000304 6805           00515   SETF MANUAL_MODE,0
+000306 EF?? F???      00516   GOTO ESPERA_FI_P2
+                      00517 ;--------------------------------------
+                      00518 ; FUNCIONS DE CONFIGURACIONS DE LA RAM
+                      00519 ;--------------------------------------
+                      00520 ; Inicialitza la RAM a la posicio inicial on guardarem els valors 
+                      00521 ; dels parametres. Comença a la posicio 0 del Bank 1
+00030A                00522 INITIAL_POSITION_RAM
+                      00523   ; Situem a l'adreça 0
+00030A 6AE9           00524   CLRF FSR0L,0
+                      00525   ; Situem al Bank 1
+00030C 0E01           00526   MOVLW .1
+00030E 6EEA           00527   MOVWF FSR0H,0
+000310 0012           00528   RETURN
+                      00529   
+                      00530 
+                      00531 ; Neteja (posa a 0) les 128 primeres adreces del Bank 1
+                      00532 ; Ja que com a maxim omplirem 4@ * 30saves = 120@
+000312                00533 NETEJA_RAM
+000312 EC?? F???      00534   CALL INITIAL_POSITION_RAM
+000316 6A07           00535   CLRF ContInstL
+Warning[207]: Found label after column 1. (NETEJA)
+000318                00536   NETEJA
+000318 2A07           00537     INCF ContInstL,1
+00031A 6AEE           00538     CLRF POSTINC0,0
+00031C A6D8           00539     BTFSS STATUS,OV,0
+00031E EF?? F???      00540     GOTO NETEJA
+000322 0012           00541   RETURN
+                      00542 
+                      00543   
+                      00544 ;--------------------------------------
+                      00545 ; FUNCIONS DE CONFIGURACIONS INICIALS
+                      00546 ;--------------------------------------
+                      00547 ; Config OSC per tenir F=16MHz
+000324                00548 INIT_OSC
+000324 0E60           00549   MOVLW b'01100000'
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000326 6ED3           00550   MOVWF OSCCON,0
+000328 8C9B           00551   BSF OSCTUNE,PLLEN,0
+00032A 0012           00552   RETURN
+                      00553 
+                      00554 ; Inicialitza ports a utilitzar
+00032C                00555 INIT_PORTS
+00032C 8092           00556   BSF TRISA,0,0
+00032E 8292           00557   BSF TRISA,1,0
+000330 9492           00558   BCF TRISA,2,0 
+000332 9692           00559   BCF TRISA,3,0
+000334 8093           00560   BSF TRISB,0,0
+000336 8293           00561   BSF TRISB,1,0
+000338 8493           00562   BSF TRISB,2,0
+00033A 9693           00563   BCF TRISB,3,0
+00033C 9893           00564   BCF TRISB,4,0
+00033E 9C93           00565   BCF TRISB,6,0
+000340 9E93           00566   BCF TRISB,7,0
+000342 6A94           00567   CLRF TRISC,0
+000344 6A95           00568   CLRF TRISD,0
+000346 9096           00569   BCF TRISE,0,0
+000348 9296           00570   BCF TRISE,1,0
+00034A 9496           00571   BCF TRISE,2,0
+00034C 9EF1           00572   BCF INTCON2,RBPU,0
+00034E 0012           00573   RETURN
+                      00574 
+                      00575 ; Inicialitza variables a utilitzar
+000350                00576 INIT_VARS
+000350 0E37           00577   MOVLW b'00110111'
+000352 6E00           00578   MOVWF CONST_7SEG_HIGH
+000354 0E75           00579   MOVLW b'01110101'
+000356 6E01           00580   MOVWF CONST_7SEG_MID
+000358 0E0D           00581   MOVLW b'00001101'
+00035A 6E02           00582   MOVWF CONST_7SEG_LOW
+00035C 0E7D           00583   MOVLW b'01111101'
+00035E 6E03           00584   MOVWF CONST_7SEG_0
+000360 6805           00585   SETF MANUAL_MODE
+000362 9689           00586   BCF LATA,3,0
+000364 C003 FF8C      00587   MOVFF CONST_7SEG_0,LATD
+000368 EC?? F???      00588   CALL RGB_GREEN
+00036C EC?? F???      00589   CALL RESET_TICS_MIN
+000370 0E04           00590   MOVLW .4
+000372 6E06           00591   MOVWF VEL_ACTUAL
+000374 0E05           00592   MOVLW .5
+000376 6E13           00593   MOVWF DIR_ACTUAL
+000378 6A0B           00594   CLRF ALARM_EN
+00037A 6A04           00595   CLRF IS_NEGATIVE
+00037C 6A0E           00596   CLRF AUTOP_EN
+00037E 6A11           00597   CLRF RECORD_MODE
+000380 6A12           00598   CLRF Tics20
+000382 EC?? F???      00599   CALL RESET_TICS_DELAY
+000386 6A1A           00600   CLRF ContSaves
+000388 6A22           00601   CLRF TicsDC,0
+00038A 6821           00602   SETF DC_IS_SET,0
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00603   ; Inicialitzem els PWM
+00038C 9489           00604   BCF LATA,2,0
+00038E 8C8A           00605   BSF LATB,6,0              
+000390 9E8A           00606   BCF LATB,7,0
+                      00607   ; Posem els 2 leds del mig de la barra encesos
+000392 EC?? F???      00608   CALL CLEAN_LED_BAR
+000396 888B           00609   BSF LATC,4,0
+000398 8A8B           00610   BSF LATC,5,0
+00039A 0012           00611   RETURN
+                      00612 
+                      00613 ; Inicialitza ADC pel joystick (AN0 i AN1)
+00039C                00614 INIT_ADC
+                      00615   ;Analog OUT (AN0 & AN1) i deshabilita Vref
+00039C 0E0D           00616   MOVLW b'00001101'
+00039E 6EC1           00617   MOVWF ADCON1,0
+                      00618   ;Clear ADCON2
+0003A0 6AC0           00619   CLRF ADCON2,0
+                      00620   ;Enable ADC i selecciona Channel 0
+0003A2 0E01           00621   MOVLW b'00000001'
+0003A4 6EC2           00622   MOVWF ADCON0,0
+0003A6 0012           00623   RETURN
+                      00624 
+                      00625 ; Inicialitza les interrupcions a utilitzar (nomes la del timer)
+0003A8                00626 INIT_IRQS
+0003A8 9ED0           00627   BCF RCON,IPEN,0
+0003AA 0EC0           00628   MOVLW b'11000000'
+0003AC 6EF2           00629   MOVWF INTCON,0
+0003AE 0012           00630   RETURN
+                      00631 
+                      00632 ; Inicialitza el timer a utilitzar (TIMER0)
+0003B0                00633 INIT_TMR
+0003B0 0E8F           00634   MOVLW b'10001111'
+0003B2 6ED5           00635   MOVWF T0CON,0
+0003B4 8AF2           00636   BSF INTCON,TMR0IE,0
+0003B6 0012           00637   RETURN
+                      00638 
+                      00639 ;--------------------------------------
+                      00640 ; MAIN I LOOP DEL PROGRAMA
+                      00641 ;--------------------------------------
+0003B8                00642 MAIN
+0003B8 EC?? F???      00643   CALL INIT_OSC
+0003BC EC?? F???      00644   CALL INIT_PORTS
+0003C0 EC?? F???      00645   CALL INIT_VARS
+0003C4 EC?? F???      00646   CALL INIT_ADC
+0003C8 EC?? F???      00647   CALL INIT_IRQS
+0003CC EC?? F???      00648   CALL INIT_TMR
+                      00649   
+0003D0                00650 LOOP
+                      00651 ; Reprodueix ruta si estem en mode pilot automatic
+Warning[203]: Found opcode in column 1. (BTFSC)
+0003D0 B01B           00652 BTFSC AUTOP_MODE,0
 Warning[203]: Found opcode in column 1. (GOTO)
-0002C2 EF?? F???      00499 GOTO REPRODUIR_RUTA
-                      00500 ; Consulta Polsador Manual
+0003D2 EF?? F???      00653 GOTO REPRODUIR_RUTA
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00654 ; Consulta Polsador Manual
 Warning[203]: Found opcode in column 1. (BTFSS)
-0002C6 A081           00501 BTFSS PORTB,0,0 
+0003D6 A081           00655 BTFSS PORTB,0,0 
 Warning[203]: Found opcode in column 1. (CALL)
-0002C8 EC?? F???      00502 CALL CHANGE_MANUAL_MODE
-                      00503 ; Consulta Polsador Recording
+0003D8 EC?? F???      00656 CALL CHANGE_MANUAL_MODE
+                      00657 ; Consulta Polsador Recording
 Warning[203]: Found opcode in column 1. (BTFSS)
-0002CC A281           00504 BTFSS PORTB,1,0
+0003DC A281           00658 BTFSS PORTB,1,0
 Warning[203]: Found opcode in column 1. (CALL)
-0002CE EC?? F???      00505 CALL CHANGE_RECORDING_MODE
-                      00506 ; Consulta Polsador Save
+0003DE EC?? F???      00659 CALL CHANGE_RECORDING_MODE
+                      00660 ; Consulta Polsador Save
 Warning[203]: Found opcode in column 1. (BTFSS)
-0002D2 A481           00507 BTFSS PORTB,2,0
+0003E2 A481           00661 BTFSS PORTB,2,0
 Warning[203]: Found opcode in column 1. (CALL)
-0002D4 EC?? F???      00508 CALL SAVE_PARAMS
-                      00509 ; Check direccio
+0003E4 EC?? F???      00662 CALL SAVE_PARAMS
+                      00663 ; Check direccio
 Warning[203]: Found opcode in column 1. (CALL)
-0002D8 EC?? F???      00510 CALL TAKE_DIRECTION 
-                      00511 ; Check Mode i velocitat si Manual
+0003E8 EC?? F???      00664 CALL TAKE_DIRECTION 
+                      00665 ; Check Mode i velocitat si Manual
 Warning[203]: Found opcode in column 1. (BTFSS)
-0002DC A005           00512 BTFSS MANUAL_MODE,0
+0003EC A005           00666 BTFSS MANUAL_MODE,0
 Warning[203]: Found opcode in column 1. (GOTO)
-0002DE EF?? F???      00513 GOTO LOOP
-                      00514 
-                      00515 ; Selecciona CH0
+0003EE EF?? F???      00667 GOTO LOOP
+                      00668 
+                      00669 ; Selecciona CH0   
 Warning[203]: Found opcode in column 1. (BCF)
-0002E2 94C2           00516 BCF ADCON0,CHS0,0
+0003F2 94C2           00670 BCF ADCON0,CHS0,0
 Warning[203]: Found opcode in column 1. (CALL)
-0002E4 EC?? F???      00517 CALL WAIT_GO_ADC
-                      00518 
-                      00519 ;Agafa el output (en ADRESH)
-                      00520 ;Per utilitzar 7 passos OUTPUT --> ADRESH rang (numero de valors) 
-                      00521                         ;H (N) --> [0,38]      (39)
-                      00522                         ;M (N) --> [39,77]     (39)
-                      00523                         ;L (N) --> [78, 116]   (39)
-                      00524                         ;0 --> [117,138]       (22)
-                      00525                         ;L (P) --> [139, 177]  (39)
-                      00526                         ;M (P) --> [178,216]   (39)
-                      00527                         ;H (P) --> [217,255]   (39)
-                      00528 ; Divideix in 2 parts per utilitzar el bit Negative de STATUS 
-                      00529 ; Sense sobrepassar el limit CA2
+0003F4 EC?? F???      00671 CALL COUNT_CHANGE_CHANNEL
+Warning[203]: Found opcode in column 1. (CALL)
+0003F8 EC?? F???      00672 CALL WAIT_GO_ADC
+                      00673 
+                      00674 ;Agafa el output (en ADRESH)
+                      00675 ;Per utilitzar 7 passos OUTPUT --> ADRESH rang (numero de valors) 
+                      00676                         ;H (N) --> [0,38]      (39)
+                      00677                         ;M (N) --> [39,77]     (39)
+                      00678                         ;L (N) --> [78, 116]   (39)
+                      00679                         ;0 --> [117,138]       (22)
+                      00680                         ;L (P) --> [139, 177]  (39)
+                      00681                         ;M (P) --> [178,216]   (39)
+                      00682                         ;H (P) --> [217,255]   (39)
+                      00683 ; Divideix en 2 parts per utilitzar el bit Negative de STATUS 
+                      00684 ; Sense sobrepassar el limit CA2
 Warning[203]: Found opcode in column 1. (MOVLW)
-0002E8 0E8B           00530 MOVLW .139
+0003FC 0E8B           00685 MOVLW .139
 Warning[203]: Found opcode in column 1. (SUBWF)
-0002EA 5CC4           00531 SUBWF ADRESH,0,0
+0003FE 5CC4           00686 SUBWF ADRESH,0,0
 Warning[203]: Found opcode in column 1. (BTFSC)
-0002EC B8D8           00532 BTFSC STATUS,N,0
+000400 B8D8           00687 BTFSC STATUS,N,0
 Warning[203]: Found opcode in column 1. (GOTO)
-0002EE EF?? F???      00533 GOTO CHECK_LOW_VEL
+000402 EF?? F???      00688 GOTO CHECK_LOW_VEL
 Warning[203]: Found opcode in column 1. (GOTO)
-0002F2 EF?? F???      00534 GOTO CHECK_HIGH_VEL
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 12
+000406 EF?? F???      00689 GOTO CHECK_HIGH_VEL
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 15
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00535 
-                      00536 ; Assigna les velocitats negatives i el 0
-0002F6                00537 CHECK_LOW_VEL
-0002F6 0E27           00538   MOVLW .39
-0002F8 5CC4           00539   SUBWF ADRESH,0,0
-0002FA B8D8           00540   BTFSC STATUS,N,0
-0002FC EF?? F???      00541   GOTO VEL_N_HIGH
-000300 0E4E           00542   MOVLW .78
-000302 5CC4           00543   SUBWF ADRESH,0,0
-000304 B8D8           00544   BTFSC STATUS,N,0
-000306 EF?? F???      00545   GOTO VEL_N_MID
-00030A 0E75           00546   MOVLW .117
-00030C 5CC4           00547   SUBWF ADRESH,0,0
-00030E B8D8           00548   BTFSC STATUS,N,0
-000310 EF?? F???      00549   GOTO VEL_N_LOW
-000314 EF?? F???      00550   GOTO VEL_0
-                      00551 
-                      00552 ; Assigna les velocitats positives
-000318                00553 CHECK_HIGH_VEL
-000318 0EB2           00554   MOVLW .178
-00031A 5CC4           00555   SUBWF ADRESH,0,0
-00031C B8D8           00556   BTFSC STATUS,N,0
-00031E EF?? F???      00557   GOTO VEL_P_LOW
-000322 0ED9           00558   MOVLW .217
-000324 5CC4           00559   SUBWF ADRESH,0,0
-000326 B8D8           00560   BTFSC STATUS,N,0
-000328 EF?? F???      00561   GOTO VEL_P_MID
-00032C 0EFF           00562   MOVLW .255
-00032E 5CC4           00563   SUBWF ADRESH,0,0
-000330 B8D8           00564   BTFSC STATUS,N,0
-000332 EF?? F???      00565   GOTO VEL_P_HIGH
-                      00566 
-                      00567 ; Les següents funcions assignen la velocitat, i la posen als 7seg i encenen
-                      00568 ; o apaguen el led de velocitat negatiu mentre no estigui l'alarma activada
-                      00569 ; Assigna la velocitat (N) H
-000336                00570 VEL_N_HIGH
-000336 A004           00571   BTFSS IS_NEGATIVE,0
-000338 EF?? F???      00572   GOTO VEL_P_HIGH
-00033C 0E01           00573   MOVLW .1
-00033E 5C06           00574   SUBWF VEL_ACTUAL,0
-000340 B4D8           00575   BTFSC STATUS,Z,0
-000342 EF?? F???      00576   GOTO LOOP
-000346 0E01           00577   MOVLW .1
-000348 6E06           00578   MOVWF VEL_ACTUAL
-00034A EC?? F???      00579   CALL RESET_TICS_MIN
-00034E C000 FF8C      00580   MOVFF CONST_7SEG_HIGH,LATD
-000352 A011           00581   BTFSS ALARM_EN,0
-000354 8689           00582   BSF LATA,3,0
-000356 0E01           00583   MOVLW .1
-000358 6E04           00584   MOVWF IS_NEGATIVE
-00035A EF?? F???      00585   GOTO LOOP
-                      00586 
-                      00587 ; Assigna la velocitat (N) M 
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 13
+                      00690 
+                      00691 ; Assigna les velocitats negatives i el 0
+00040A                00692 CHECK_LOW_VEL
+00040A 0E27           00693   MOVLW .39
+00040C 5CC4           00694   SUBWF ADRESH,0,0
+00040E B8D8           00695   BTFSC STATUS,N,0
+000410 EF?? F???      00696   GOTO VEL_N_HIGH
+000414 0E4E           00697   MOVLW .78
+000416 5CC4           00698   SUBWF ADRESH,0,0
+000418 B8D8           00699   BTFSC STATUS,N,0
+00041A EF?? F???      00700   GOTO VEL_N_MID
+00041E 0E75           00701   MOVLW .117
+000420 5CC4           00702   SUBWF ADRESH,0,0
+000422 B8D8           00703   BTFSC STATUS,N,0
+000424 EF?? F???      00704   GOTO VEL_N_LOW
+000428 EF?? F???      00705   GOTO VEL_0
+                      00706 
+                      00707 ; Assigna les velocitats positives
+00042C                00708 CHECK_HIGH_VEL
+00042C 0EB2           00709   MOVLW .178
+00042E 5CC4           00710   SUBWF ADRESH,0,0
+000430 B8D8           00711   BTFSC STATUS,N,0
+000432 EF?? F???      00712   GOTO VEL_P_LOW
+000436 0ED9           00713   MOVLW .217
+000438 5CC4           00714   SUBWF ADRESH,0,0
+00043A B8D8           00715   BTFSC STATUS,N,0
+00043C EF?? F???      00716   GOTO VEL_P_MID
+000440 0EFF           00717   MOVLW .255
+000442 5CC4           00718   SUBWF ADRESH,0,0
+000444 B8D8           00719   BTFSC STATUS,N,0
+000446 EF?? F???      00720   GOTO VEL_P_HIGH
+                      00721 
+                      00722 ; Les següents funcions assignen la velocitat, i la posen als 7seg i encenen
+                      00723 ; o apaguen el led de velocitat negatiu mentre no estigui l'alarma activada
+                      00724 ; Assigna la velocitat (N) H
+00044A                00725 VEL_N_HIGH
+00044A A004           00726   BTFSS IS_NEGATIVE,0
+00044C EF?? F???      00727   GOTO VEL_P_HIGH
+000450 0E01           00728   MOVLW .1
+000452 5C06           00729   SUBWF VEL_ACTUAL,0
+000454 B4D8           00730   BTFSC STATUS,Z,0
+000456 EF?? F???      00731   GOTO LOOP
+00045A 0E01           00732   MOVLW .1
+00045C 6E06           00733   MOVWF VEL_ACTUAL
+00045E EC?? F???      00734   CALL RESET_TICS_MIN
+000462 C000 FF8C      00735   MOVFF CONST_7SEG_HIGH,LATD
+000466 A00B           00736   BTFSS ALARM_EN,0
+000468 8689           00737   BSF LATA,3,0
+00046A 0E01           00738   MOVLW .1
+00046C 6E04           00739   MOVWF IS_NEGATIVE
+00046E EF?? F???      00740   GOTO LOOP
+                      00741 
+                      00742 ; Assigna la velocitat (N) M 
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00035E                00588 VEL_N_MID
-00035E 0E02           00589   MOVLW .2
-000360 5C06           00590   SUBWF VEL_ACTUAL,0
-000362 B4D8           00591   BTFSC STATUS,Z,0
-000364 EF?? F???      00592   GOTO LOOP
-000368 0E02           00593   MOVLW .2
-00036A 6E06           00594   MOVWF VEL_ACTUAL
-00036C EC?? F???      00595   CALL RESET_TICS_MIN
-000370 C001 FF8C      00596   MOVFF CONST_7SEG_MID,LATD
-000374 A011           00597   BTFSS ALARM_EN,0
-000376 8689           00598   BSF LATA,3,0
-000378 0E01           00599   MOVLW .1
-00037A 6E04           00600   MOVWF IS_NEGATIVE
-00037C EF?? F???      00601   GOTO LOOP
-                      00602 
-                      00603 ; Assigna la velocitat (N) L
-000380                00604 VEL_N_LOW
-000380 0E03           00605   MOVLW .3
-000382 5C06           00606   SUBWF VEL_ACTUAL,0
-000384 B4D8           00607   BTFSC STATUS,Z,0
-000386 EF?? F???      00608   GOTO LOOP
-00038A 0E03           00609   MOVLW .3
-00038C 6E06           00610   MOVWF VEL_ACTUAL
-00038E EC?? F???      00611   CALL RESET_TICS_MIN
-000392 C002 FF8C      00612   MOVFF CONST_7SEG_LOW,LATD
-000396 A011           00613   BTFSS ALARM_EN,0
-000398 8689           00614   BSF LATA,3,0
-00039A 0E01           00615   MOVLW .1
-00039C 6E04           00616   MOVWF IS_NEGATIVE
-00039E EF?? F???      00617   GOTO LOOP
-                      00618 
-                      00619 ; Assigna la velocitat 0
-0003A2                00620 VEL_0
-0003A2 0E04           00621   MOVLW .4
-0003A4 5C06           00622   SUBWF VEL_ACTUAL,0
-0003A6 B4D8           00623   BTFSC STATUS,Z,0
-0003A8 EF?? F???      00624   GOTO LOOP
-0003AC 0E04           00625   MOVLW .4
-0003AE 6E06           00626   MOVWF VEL_ACTUAL
-0003B0 EC?? F???      00627   CALL RESET_TICS_MIN
-0003B4 C003 FF8C      00628   MOVFF CONST_7SEG_0,LATD
-0003B8 A011           00629   BTFSS ALARM_EN,0
-0003BA 9689           00630   BCF LATA,3,0
-0003BC 6A04           00631   CLRF IS_NEGATIVE
-0003BE EF?? F???      00632   GOTO LOOP
-                      00633 
-                      00634 ; Assigna la velocitat (P) L 
-0003C2                00635 VEL_P_LOW
-0003C2 0E05           00636   MOVLW .5
-0003C4 5C06           00637   SUBWF VEL_ACTUAL,0
-0003C6 B4D8           00638   BTFSC STATUS,Z,0
-0003C8 EF?? F???      00639   GOTO LOOP
-0003CC 0E05           00640   MOVLW .5
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 14
+000472                00743 VEL_N_MID
+000472 0E02           00744   MOVLW .2
+000474 5C06           00745   SUBWF VEL_ACTUAL,0
+000476 B4D8           00746   BTFSC STATUS,Z,0
+000478 EF?? F???      00747   GOTO LOOP
+00047C 0E02           00748   MOVLW .2
+00047E 6E06           00749   MOVWF VEL_ACTUAL
+000480 EC?? F???      00750   CALL RESET_TICS_MIN
+000484 C001 FF8C      00751   MOVFF CONST_7SEG_MID,LATD
+000488 A00B           00752   BTFSS ALARM_EN,0
+00048A 8689           00753   BSF LATA,3,0
+00048C 0E01           00754   MOVLW .1
+00048E 6E04           00755   MOVWF IS_NEGATIVE
+000490 EF?? F???      00756   GOTO LOOP
+                      00757 
+                      00758 ; Assigna la velocitat (N) L
+000494                00759 VEL_N_LOW
+000494 0E03           00760   MOVLW .3
+000496 5C06           00761   SUBWF VEL_ACTUAL,0
+000498 B4D8           00762   BTFSC STATUS,Z,0
+00049A EF?? F???      00763   GOTO LOOP
+00049E 0E03           00764   MOVLW .3
+0004A0 6E06           00765   MOVWF VEL_ACTUAL
+0004A2 EC?? F???      00766   CALL RESET_TICS_MIN
+0004A6 C002 FF8C      00767   MOVFF CONST_7SEG_LOW,LATD
+0004AA A00B           00768   BTFSS ALARM_EN,0
+0004AC 8689           00769   BSF LATA,3,0
+0004AE 0E01           00770   MOVLW .1
+0004B0 6E04           00771   MOVWF IS_NEGATIVE
+0004B2 EF?? F???      00772   GOTO LOOP
+                      00773 
+                      00774 ; Assigna la velocitat 0
+0004B6                00775 VEL_0
+0004B6 0E04           00776   MOVLW .4
+0004B8 5C06           00777   SUBWF VEL_ACTUAL,0
+0004BA B4D8           00778   BTFSC STATUS,Z,0
+0004BC EF?? F???      00779   GOTO LOOP
+0004C0 0E04           00780   MOVLW .4
+0004C2 6E06           00781   MOVWF VEL_ACTUAL
+0004C4 EC?? F???      00782   CALL RESET_TICS_MIN
+0004C8 C003 FF8C      00783   MOVFF CONST_7SEG_0,LATD
+0004CC A00B           00784   BTFSS ALARM_EN,0
+0004CE 9689           00785   BCF LATA,3,0
+0004D0 6A04           00786   CLRF IS_NEGATIVE
+0004D2 EF?? F???      00787   GOTO LOOP
+                      00788 
+                      00789 ; Assigna la velocitat (P) L 
+0004D6                00790 VEL_P_LOW
+0004D6 0E05           00791   MOVLW .5
+0004D8 5C06           00792   SUBWF VEL_ACTUAL,0
+0004DA B4D8           00793   BTFSC STATUS,Z,0
+0004DC EF?? F???      00794   GOTO LOOP
+0004E0 0E05           00795   MOVLW .5
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 17
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0003CE 6E06           00641   MOVWF VEL_ACTUAL
-0003D0 EC?? F???      00642   CALL RESET_TICS_MIN
-0003D4 C002 FF8C      00643   MOVFF CONST_7SEG_LOW,LATD
-0003D8 A011           00644   BTFSS ALARM_EN,0
-0003DA 9689           00645   BCF LATA,3,0
-0003DC 6A04           00646   CLRF IS_NEGATIVE
-0003DE EF?? F???      00647   GOTO LOOP
-                      00648 
-                      00649 ; Assigna la velocitat (P) M
-0003E2                00650 VEL_P_MID
-0003E2 0E06           00651   MOVLW .6
-0003E4 5C06           00652   SUBWF VEL_ACTUAL,0
-0003E6 B4D8           00653   BTFSC STATUS,Z,0
-0003E8 EF?? F???      00654   GOTO LOOP
-0003EC 0E06           00655   MOVLW .6
-0003EE 6E06           00656   MOVWF VEL_ACTUAL
-0003F0 EC?? F???      00657   CALL RESET_TICS_MIN
-0003F4 C001 FF8C      00658   MOVFF CONST_7SEG_MID,LATD
-0003F8 A011           00659   BTFSS ALARM_EN,0
-0003FA 9689           00660   BCF LATA,3,0
-0003FC 6A04           00661   CLRF IS_NEGATIVE
-0003FE EF?? F???      00662   GOTO LOOP
-                      00663 
-                      00664 ; Assigna la velocitat (P) H
-000402                00665 VEL_P_HIGH
-000402 0E07           00666   MOVLW .7
-000404 5C06           00667   SUBWF VEL_ACTUAL,0
-000406 B4D8           00668   BTFSC STATUS,Z,0
-000408 EF?? F???      00669   GOTO LOOP
-00040C 0E07           00670   MOVLW .7
-00040E 6E06           00671   MOVWF VEL_ACTUAL
-000410 EC?? F???      00672   CALL RESET_TICS_MIN
-000414 C000 FF8C      00673   MOVFF CONST_7SEG_HIGH,LATD
-000418 A011           00674   BTFSS ALARM_EN,0
-00041A 9689           00675   BCF LATA,3,0
-00041C 6A04           00676   CLRF IS_NEGATIVE
-00041E EF?? F???      00677   GOTO LOOP
-                      00678 
-                      00679 ; Assigna la direccio actual
-000422                00680 TAKE_DIRECTION
-                      00681   ; Selecciona CH1
-000422 84C2           00682   BSF ADCON0,CHS0,0
-000424 EC?? F???      00683   CALL WAIT_GO_ADC
-                      00684   ;Agafa el output (en ADRESH)
-                      00685   ;Per utilitzar 9 passos OUTPUT --> ADRESH rang (numero de valors) 
-                      00686                         ;MAX (L) --> [0,10]     (11)
-                      00687                         ;H (L) --> [11,46]      (36)
-                      00688                         ;M (L) --> [47, 82]     (36)
-                      00689                         ;L (L) --> [83,118]     (36)
-                      00690                         ;S --> [119, 136]       (18)
-                      00691                         ;L (R) --> [137,172]    (36)
-                      00692                         ;M (R) --> [173,208]    (36)
-                      00693                         ;H (R) --> [209,244]    (36)
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 15
+0004E2 6E06           00796   MOVWF VEL_ACTUAL
+0004E4 EC?? F???      00797   CALL RESET_TICS_MIN
+0004E8 C002 FF8C      00798   MOVFF CONST_7SEG_LOW,LATD
+0004EC A00B           00799   BTFSS ALARM_EN,0
+0004EE 9689           00800   BCF LATA,3,0
+0004F0 6A04           00801   CLRF IS_NEGATIVE
+0004F2 EF?? F???      00802   GOTO LOOP
+                      00803 
+                      00804 ; Assigna la velocitat (P) M
+0004F6                00805 VEL_P_MID
+0004F6 0E06           00806   MOVLW .6
+0004F8 5C06           00807   SUBWF VEL_ACTUAL,0
+0004FA B4D8           00808   BTFSC STATUS,Z,0
+0004FC EF?? F???      00809   GOTO LOOP
+000500 0E06           00810   MOVLW .6
+000502 6E06           00811   MOVWF VEL_ACTUAL
+000504 EC?? F???      00812   CALL RESET_TICS_MIN
+000508 C001 FF8C      00813   MOVFF CONST_7SEG_MID,LATD
+00050C A00B           00814   BTFSS ALARM_EN,0
+00050E 9689           00815   BCF LATA,3,0
+000510 6A04           00816   CLRF IS_NEGATIVE
+000512 EF?? F???      00817   GOTO LOOP
+                      00818 
+                      00819 ; Assigna la velocitat (P) H
+000516                00820 VEL_P_HIGH
+000516 0E07           00821   MOVLW .7
+000518 5C06           00822   SUBWF VEL_ACTUAL,0
+00051A B4D8           00823   BTFSC STATUS,Z,0
+00051C EF?? F???      00824   GOTO LOOP
+000520 0E07           00825   MOVLW .7
+000522 6E06           00826   MOVWF VEL_ACTUAL
+000524 EC?? F???      00827   CALL RESET_TICS_MIN
+000528 C000 FF8C      00828   MOVFF CONST_7SEG_HIGH,LATD
+00052C A00B           00829   BTFSS ALARM_EN,0
+00052E 9689           00830   BCF LATA,3,0
+000530 6A04           00831   CLRF IS_NEGATIVE
+000532 EF?? F???      00832   GOTO LOOP
+                      00833 
+                      00834 ; Assigna la direccio actual
+000536                00835 TAKE_DIRECTION
+                      00836   ; Selecciona CH1
+000536 84C2           00837   BSF ADCON0,CHS0,0     
+000538 EC?? F???      00838   CALL COUNT_CHANGE_CHANNEL
+00053C EC?? F???      00839   CALL WAIT_GO_ADC
+                      00840   ;Agafa el output (en ADRESH)
+                      00841   ;Per utilitzar 9 passos OUTPUT --> ADRESH rang (numero de valors) 
+                      00842                         ;MAX (L) --> [0,10]     (11)
+                      00843                         ;H (L) --> [11,46]      (36)
+                      00844                         ;M (L) --> [47, 82]     (36)
+                      00845                         ;L (L) --> [83,118]     (36)
+                      00846                         ;S --> [119, 136]       (18)
+                      00847                         ;L (R) --> [137,172]    (36)
+                      00848                         ;M (R) --> [173,208]    (36)
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 18
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00694                         ;MAX (R) --> [245,255]  (11)
-                      00695   
-                      00696   ; Divideix in 2 parts per utilitzar el bit Negative de STATUS 
-                      00697   ; Sense sobrepassar el limit CA2
-000428 0E89           00698   MOVLW .137
-00042A 5CC4           00699   SUBWF ADRESH,0,0
-00042C B8D8           00700   BTFSC STATUS,N,0
-00042E EF?? F???      00701   GOTO CHECK_LOW_DIR
-000432 EF?? F???      00702   GOTO CHECK_HIGH_DIR
-                      00703   
-                      00704   ; Assigna les direccions de l'esquerra i el 0
+                      00849                         ;H (R) --> [209,244]    (36)
+                      00850                         ;MAX (R) --> [245,255]  (11)
+                      00851   
+                      00852   ; Divideix in 2 parts per utilitzar el bit Negative de STATUS 
+                      00853   ; Sense sobrepassar el limit CA2
+000540 0E89           00854   MOVLW .137
+000542 5CC4           00855   SUBWF ADRESH,0,0
+000544 B8D8           00856   BTFSC STATUS,N,0
+000546 EF?? F???      00857   GOTO CHECK_LOW_DIR
+00054A EF?? F???      00858   GOTO CHECK_HIGH_DIR
+                      00859   
+                      00860   ; Assigna les direccions de l'esquerra i el 0
 Warning[207]: Found label after column 1. (CHECK_LOW_DIR)
-000436                00705   CHECK_LOW_DIR                 
-000436 0E0B           00706     MOVLW .11
-000438 5CC4           00707     SUBWF ADRESH,0,0
-00043A B8D8           00708     BTFSC STATUS,N,0
-00043C EF?? F???      00709     GOTO DIR_L_MAX
-000440 0E2F           00710     MOVLW .47
-000442 5CC4           00711     SUBWF ADRESH,0,0
-000444 B8D8           00712     BTFSC STATUS,N,0
-000446 EF?? F???      00713     GOTO DIR_L_HIGH
-00044A 0E53           00714     MOVLW .83
-00044C 5CC4           00715     SUBWF ADRESH,0,0
-00044E B8D8           00716     BTFSC STATUS,N,0
-000450 EF?? F???      00717     GOTO DIR_L_MID
-000454 0E77           00718     MOVLW .119
-000456 5CC4           00719     SUBWF ADRESH,0,0
-000458 B8D8           00720     BTFSC STATUS,N,0
-00045A EF?? F???      00721     GOTO DIR_L_LOW
-00045E EF?? F???      00722     GOTO DIR_S
-                      00723   
-                      00724   ; Assigna les direccions de la dreta
+00054E                00861   CHECK_LOW_DIR                 
+00054E 0E0B           00862     MOVLW .11
+000550 5CC4           00863     SUBWF ADRESH,0,0
+000552 B8D8           00864     BTFSC STATUS,N,0
+000554 EF?? F???      00865     GOTO DIR_L_MAX
+000558 0E2F           00866     MOVLW .47
+00055A 5CC4           00867     SUBWF ADRESH,0,0
+00055C B8D8           00868     BTFSC STATUS,N,0
+00055E EF?? F???      00869     GOTO DIR_L_HIGH
+000562 0E53           00870     MOVLW .83
+000564 5CC4           00871     SUBWF ADRESH,0,0
+000566 B8D8           00872     BTFSC STATUS,N,0
+000568 EF?? F???      00873     GOTO DIR_L_MID
+00056C 0E77           00874     MOVLW .119
+00056E 5CC4           00875     SUBWF ADRESH,0,0
+000570 B8D8           00876     BTFSC STATUS,N,0
+000572 EF?? F???      00877     GOTO DIR_L_LOW
+000576 EF?? F???      00878     GOTO DIR_S
+                      00879   
+                      00880   ; Assigna les direccions de la dreta
 Warning[207]: Found label after column 1. (CHECK_HIGH_DIR)
-000462                00725   CHECK_HIGH_DIR
-000462 0EAD           00726     MOVLW .173  
-000464 5CC4           00727     SUBWF ADRESH,0,0
-000466 B8D8           00728     BTFSC STATUS,N,0
-000468 EF?? F???      00729     GOTO DIR_R_LOW
-00046C 0ED1           00730     MOVLW .209
-00046E 5CC4           00731     SUBWF ADRESH,0,0
-000470 B8D8           00732     BTFSC STATUS,N,0
-000472 EF?? F???      00733     GOTO DIR_R_MID
-000476 0EF5           00734     MOVLW .245
-000478 5CC4           00735     SUBWF ADRESH,0,0
-00047A B8D8           00736     BTFSC STATUS,N,0
-00047C EF?? F???      00737     GOTO DIR_R_HIGH
-000480 0EFF           00738     MOVLW .255
-000482 5CC4           00739     SUBWF ADRESH,0,0
-000484 B8D8           00740     BTFSC STATUS,N,0
-000486 EF?? F???      00741     GOTO DIR_R_MAX
-00048A EF?? F???      00742     GOTO DIR_L_MAX
-                      00743   
+00057A                00881   CHECK_HIGH_DIR
+00057A 0EAD           00882     MOVLW .173  
+00057C 5CC4           00883     SUBWF ADRESH,0,0
+00057E B8D8           00884     BTFSC STATUS,N,0
+000580 EF?? F???      00885     GOTO DIR_R_LOW
+000584 0ED1           00886     MOVLW .209
+000586 5CC4           00887     SUBWF ADRESH,0,0
+000588 B8D8           00888     BTFSC STATUS,N,0
+00058A EF?? F???      00889     GOTO DIR_R_MID
+00058E 0EF5           00890     MOVLW .245
+000590 5CC4           00891     SUBWF ADRESH,0,0
+000592 B8D8           00892     BTFSC STATUS,N,0
+000594 EF?? F???      00893     GOTO DIR_R_HIGH
+000598 0EFF           00894     MOVLW .255
+00059A 5CC4           00895     SUBWF ADRESH,0,0
+00059C B8D8           00896     BTFSC STATUS,N,0
+00059E EF?? F???      00897     GOTO DIR_R_MAX
+0005A2 EF?? F???      00898     GOTO DIR_L_MAX
+                      00899   
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
 Warning[207]: Found label after column 1. (GO_BACK)
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 16
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-00048E                00744   GO_BACK
-00048E 0012           00745   RETURN
-                      00746   
-                      00747 ; Les següents funcions assignen la direccio, i la posen a la barra de leds,
-                      00748 ; a mes de mesurar el PWM que haura de tenir el servo
-                      00749 ; Assigna la direccio (L) MAX
-000490                00750 DIR_L_MAX
-000490 A020           00751   BTFSS IS_LEFT,0
-000492 EF?? F???      00752   GOTO DIR_R_MAX
-000496 0E01           00753   MOVLW .1
-000498 5C19           00754   SUBWF DIR_ACTUAL,0
-00049A B4D8           00755   BTFSC STATUS,Z,0
-00049C EF?? F???      00756   GOTO GO_BACK
-0004A0 0E01           00757   MOVLW .1
-0004A2 6E19           00758   MOVWF DIR_ACTUAL
-0004A4 EC?? F???      00759   CALL RESET_TICS_MIN
-                      00760   ; Encenem el valor corresponent a la barra de leds
-0004A8 808B           00761   BSF LATC,0,0
-0004AA 928B           00762   BCF LATC,1,0
-0004AC 0E01           00763   MOVLW .1
-0004AE 6E20           00764   MOVWF IS_LEFT
-0004B0 EF?? F???      00765   GOTO GO_BACK
-                      00766  
-                      00767 ; Assigna la direccio (L) HIGH
-0004B4                00768 DIR_L_HIGH
-0004B4 A020           00769   BTFSS IS_LEFT,0
-0004B6 EF?? F???      00770   GOTO DIR_R_MAX
-0004BA 0E02           00771   MOVLW .2
-0004BC 5C19           00772   SUBWF DIR_ACTUAL,0
-0004BE B4D8           00773   BTFSC STATUS,Z,0
-0004C0 EF?? F???      00774   GOTO GO_BACK
-0004C4 0E02           00775   MOVLW .2
-0004C6 6E19           00776   MOVWF DIR_ACTUAL
-0004C8 EC?? F???      00777   CALL RESET_TICS_MIN
-                      00778   ; Encenem el valor corresponent a la barra de leds
-0004CC 908B           00779   BCF LATC,0,0
-0004CE 828B           00780   BSF LATC,1,0
-0004D0 948B           00781   BCF LATC,2,0
-0004D2 0E01           00782   MOVLW .1
-0004D4 6E20           00783   MOVWF IS_LEFT
-0004D6 EF?? F???      00784   GOTO GO_BACK
-                      00785   
-                      00786 ; Assigna la direccio (L) MID
-0004DA                00787 DIR_L_MID
-0004DA 0E03           00788   MOVLW .3
-0004DC 5C19           00789   SUBWF DIR_ACTUAL,0
-0004DE B4D8           00790   BTFSC STATUS,Z,0
-0004E0 EF?? F???      00791   GOTO GO_BACK
-0004E4 0E03           00792   MOVLW .3
-0004E6 6E19           00793   MOVWF DIR_ACTUAL
-0004E8 EC?? F???      00794   CALL RESET_TICS_MIN
-                      00795   ; Encenem el valor corresponent a la barra de leds
-0004EC 928B           00796   BCF LATC,1,0
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 17
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-0004EE 848B           00797   BSF LATC,2,0
-0004F0 968B           00798   BCF LATC,3,0
-0004F2 0E01           00799   MOVLW .1
-0004F4 6E20           00800   MOVWF IS_LEFT
-0004F6 EF?? F???      00801   GOTO GO_BACK
-                      00802   
-                      00803 ; Assigna la direccio (L) LOW
-0004FA                00804 DIR_L_LOW
-0004FA 0E04           00805   MOVLW .4
-0004FC 5C19           00806   SUBWF DIR_ACTUAL,0
-0004FE B4D8           00807   BTFSC STATUS,Z,0
-000500 EF?? F???      00808   GOTO GO_BACK
-000504 0E04           00809   MOVLW .4
-000506 6E19           00810   MOVWF DIR_ACTUAL
-000508 EC?? F???      00811   CALL RESET_TICS_MIN
-                      00812   ; Encenem el valor corresponent a la barra de leds
-00050C 948B           00813   BCF LATC,2,0
-00050E 868B           00814   BSF LATC,3,0
-000510 988B           00815   BCF LATC,4,0
-000512 9A8B           00816   BCF LATC,5,0
-000514 0E01           00817   MOVLW .1
-000516 6E20           00818   MOVWF IS_LEFT
-000518 EF?? F???      00819   GOTO GO_BACK
-                      00820   
-                      00821 ; Assigna la direccio Straight (Recte)
-00051C                00822 DIR_S
-00051C 0E05           00823   MOVLW .5
-00051E 5C19           00824   SUBWF DIR_ACTUAL,0
-000520 B4D8           00825   BTFSC STATUS,Z,0
-000522 EF?? F???      00826   GOTO GO_BACK
-000526 0E05           00827   MOVLW .5
-000528 6E19           00828   MOVWF DIR_ACTUAL
-00052A EC?? F???      00829   CALL RESET_TICS_MIN
-                      00830   ; Encenem el valor corresponent a la barra de leds
-00052E 968B           00831   BCF LATC,3,0
-000530 888B           00832   BSF LATC,4,0
-000532 8A8B           00833   BSF LATC,5,0
-000534 9C8B           00834   BCF LATC,6,0
-000536 6A20           00835   CLRF IS_LEFT
-000538 EF?? F???      00836   GOTO GO_BACK
-                      00837   
-                      00838 ; Assigna la direccio (R) LOW
-00053C                00839 DIR_R_LOW
-00053C 0E06           00840   MOVLW .6
-00053E 5C19           00841   SUBWF DIR_ACTUAL,0
-000540 B4D8           00842   BTFSC STATUS,Z,0
-000542 EF?? F???      00843   GOTO GO_BACK
-000546 0E06           00844   MOVLW .6
-000548 6E19           00845   MOVWF DIR_ACTUAL
-00054A EC?? F???      00846   CALL RESET_TICS_MIN
-                      00847   ; Encenem el valor corresponent a la barra de leds
-00054E 988B           00848   BCF LATC,4,0
-000550 9A8B           00849   BCF LATC,5,0
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 18
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-000552 8C8B           00850   BSF LATC,6,0
-000554 9E8B           00851   BCF LATC,7,0
-000556 6A20           00852   CLRF IS_LEFT
-000558 EF?? F???      00853   GOTO GO_BACK
-                      00854   
-                      00855 ; Assigna la direccio (R) MID
-00055C                00856 DIR_R_MID
-00055C 0E07           00857   MOVLW .7
-00055E 5C19           00858   SUBWF DIR_ACTUAL,0
-000560 B4D8           00859   BTFSC STATUS,Z,0
-000562 EF?? F???      00860   GOTO GO_BACK
-000566 0E07           00861   MOVLW .7
-000568 6E19           00862   MOVWF DIR_ACTUAL
-00056A EC?? F???      00863   CALL RESET_TICS_MIN
-                      00864   ; Encenem el valor corresponent a la barra de leds
-00056E 9C8B           00865   BCF LATC,6,0
-000570 8E8B           00866   BSF LATC,7,0
-000572 968A           00867   BCF LATB,3,0
-000574 6A20           00868   CLRF IS_LEFT
-000576 EF?? F???      00869   GOTO GO_BACK
-                      00870   
-                      00871 ; Assigna la direccio (R) HIGH
-00057A                00872 DIR_R_HIGH
-00057A 0E08           00873   MOVLW .8
-00057C 5C19           00874   SUBWF DIR_ACTUAL,0
-00057E B4D8           00875   BTFSC STATUS,Z,0
-000580 EF?? F???      00876   GOTO GO_BACK
-000584 0E08           00877   MOVLW .8
-000586 6E19           00878   MOVWF DIR_ACTUAL
-000588 EC?? F???      00879   CALL RESET_TICS_MIN
-                      00880   ; Encenem el valor corresponent a la barra de leds
-00058C 9E8B           00881   BCF LATC,7,0
-00058E 868A           00882   BSF LATB,3,0
-000590 988A           00883   BCF LATB,4,0
-000592 6A20           00884   CLRF IS_LEFT
-000594 EF?? F???      00885   GOTO GO_BACK
-                      00886   
-                      00887 ; Assigna la direccio (R) MAX
-000598                00888 DIR_R_MAX
-000598 0E09           00889   MOVLW .9
-00059A 5C19           00890   SUBWF DIR_ACTUAL,0
-00059C B4D8           00891   BTFSC STATUS,Z,0
-00059E EF?? F???      00892   GOTO GO_BACK
-0005A2 0E09           00893   MOVLW .9
-0005A4 6E19           00894   MOVWF DIR_ACTUAL
-0005A6 EC?? F???      00895   CALL RESET_TICS_MIN
-                      00896   ; Encenem el valor corresponent a la barra de leds
-0005AA 968A           00897   BCF LATB,3,0
-0005AC 888A           00898   BSF LATB,4,0
-0005AE 6A20           00899   CLRF IS_LEFT
-0005B0 EF?? F???      00900   GOTO GO_BACK
-                      00901 
+0005A6                00900   GO_BACK
+0005A6 0012           00901   RETURN
                       00902   
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 19
+                      00903 ; Les següents funcions assignen la direccio, i la posen a la barra de leds,
+                      00904 ; a mes de mesurar el PWM que haura de tenir el servo
+                      00905 ; Assigna la direccio (L) MAX
+0005A8                00906 DIR_L_MAX
+0005A8 A014           00907   BTFSS IS_LEFT,0
+0005AA EF?? F???      00908   GOTO DIR_R_MAX
+0005AE 0E01           00909   MOVLW .1
+0005B0 5C13           00910   SUBWF DIR_ACTUAL,0
+0005B2 B4D8           00911   BTFSC STATUS,Z,0
+0005B4 EF?? F???      00912   GOTO GO_BACK
+0005B8 0E01           00913   MOVLW .1
+0005BA 6E13           00914   MOVWF DIR_ACTUAL
+0005BC EC?? F???      00915   CALL RESET_TICS_MIN
+                      00916   ; Encenem el valor corresponent a la barra de leds
+0005C0 EC?? F???      00917   CALL CLEAN_LED_BAR
+0005C4 808B           00918   BSF LATC,0,0
+0005C6 0E01           00919   MOVLW .1
+0005C8 6E14           00920   MOVWF IS_LEFT
+0005CA EF?? F???      00921   GOTO GO_BACK
+                      00922  
+                      00923 ; Assigna la direccio (L) HIGH
+0005CE                00924 DIR_L_HIGH
+0005CE A014           00925   BTFSS IS_LEFT,0
+0005D0 EF?? F???      00926   GOTO DIR_R_MAX
+0005D4 0E02           00927   MOVLW .2
+0005D6 5C13           00928   SUBWF DIR_ACTUAL,0
+0005D8 B4D8           00929   BTFSC STATUS,Z,0
+0005DA EF?? F???      00930   GOTO GO_BACK
+0005DE 0E02           00931   MOVLW .2
+0005E0 6E13           00932   MOVWF DIR_ACTUAL
+0005E2 EC?? F???      00933   CALL RESET_TICS_MIN
+                      00934   ; Encenem el valor corresponent a la barra de leds
+0005E6 EC?? F???      00935   CALL CLEAN_LED_BAR
+0005EA 828B           00936   BSF LATC,1,0
+0005EC 0E01           00937   MOVLW .1
+0005EE 6E14           00938   MOVWF IS_LEFT
+0005F0 EF?? F???      00939   GOTO GO_BACK
+                      00940   
+                      00941 ; Assigna la direccio (L) MID
+0005F4                00942 DIR_L_MID
+0005F4 0E03           00943   MOVLW .3
+0005F6 5C13           00944   SUBWF DIR_ACTUAL,0
+0005F8 B4D8           00945   BTFSC STATUS,Z,0
+0005FA EF?? F???      00946   GOTO GO_BACK
+0005FE 0E03           00947   MOVLW .3
+000600 6E13           00948   MOVWF DIR_ACTUAL
+000602 EC?? F???      00949   CALL RESET_TICS_MIN
+                      00950   ; Encenem el valor corresponent a la barra de leds
+000606 EC?? F???      00951   CALL CLEAN_LED_BAR
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 20
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00903 ; Treu l'output de ADC quan hagi acabat de fer la transformacio 
-0005B4                00904 WAIT_GO_ADC
-                      00905   ;Preparat per agafar l'output
-0005B4 82C2           00906   BSF ADCON0,GO_NOT_DONE,0
-                      00907   ;Procesessa l'output
+00060A 848B           00952   BSF LATC,2,0
+00060C 0E01           00953   MOVLW .1
+00060E 6E14           00954   MOVWF IS_LEFT
+000610 EF?? F???      00955   GOTO GO_BACK
+                      00956   
+                      00957 ; Assigna la direccio (L) LOW
+000614                00958 DIR_L_LOW
+000614 0E04           00959   MOVLW .4
+000616 5C13           00960   SUBWF DIR_ACTUAL,0
+000618 B4D8           00961   BTFSC STATUS,Z,0
+00061A EF?? F???      00962   GOTO GO_BACK
+00061E 0E04           00963   MOVLW .4
+000620 6E13           00964   MOVWF DIR_ACTUAL
+000622 EC?? F???      00965   CALL RESET_TICS_MIN
+                      00966   ; Encenem el valor corresponent a la barra de leds
+000626 EC?? F???      00967   CALL CLEAN_LED_BAR
+00062A 868B           00968   BSF LATC,3,0
+00062C 0E01           00969   MOVLW .1
+00062E 6E14           00970   MOVWF IS_LEFT
+000630 EF?? F???      00971   GOTO GO_BACK
+                      00972   
+                      00973 ; Assigna la direccio Straight (Recte)
+000634                00974 DIR_S
+000634 0E05           00975   MOVLW .5
+000636 5C13           00976   SUBWF DIR_ACTUAL,0
+000638 B4D8           00977   BTFSC STATUS,Z,0
+00063A EF?? F???      00978   GOTO GO_BACK
+00063E 0E05           00979   MOVLW .5
+000640 6E13           00980   MOVWF DIR_ACTUAL
+000642 EC?? F???      00981   CALL RESET_TICS_MIN
+                      00982   ; Encenem el valor corresponent a la barra de leds
+000646 EC?? F???      00983   CALL CLEAN_LED_BAR
+00064A 888B           00984   BSF LATC,4,0
+00064C 8A8B           00985   BSF LATC,5,0
+00064E 6A14           00986   CLRF IS_LEFT
+000650 EF?? F???      00987   GOTO GO_BACK
+                      00988   
+                      00989 ; Assigna la direccio (R) LOW
+000654                00990 DIR_R_LOW
+000654 0E06           00991   MOVLW .6
+000656 5C13           00992   SUBWF DIR_ACTUAL,0
+000658 B4D8           00993   BTFSC STATUS,Z,0
+00065A EF?? F???      00994   GOTO GO_BACK
+00065E 0E06           00995   MOVLW .6
+000660 6E13           00996   MOVWF DIR_ACTUAL
+000662 EC?? F???      00997   CALL RESET_TICS_MIN
+                      00998   ; Encenem el valor corresponent a la barra de leds
+000666 EC?? F???      00999   CALL CLEAN_LED_BAR
+00066A 8C8B           01000   BSF LATC,6,0
+00066C 6A14           01001   CLRF IS_LEFT
+00066E EF?? F???      01002   GOTO GO_BACK
+                      01003   
+                      01004 ; Assigna la direccio (R) MID
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000672                01005 DIR_R_MID
+000672 0E07           01006   MOVLW .7
+000674 5C13           01007   SUBWF DIR_ACTUAL,0
+000676 B4D8           01008   BTFSC STATUS,Z,0
+000678 EF?? F???      01009   GOTO GO_BACK
+00067C 0E07           01010   MOVLW .7
+00067E 6E13           01011   MOVWF DIR_ACTUAL
+000680 EC?? F???      01012   CALL RESET_TICS_MIN
+                      01013   ; Encenem el valor corresponent a la barra de leds
+000684 EC?? F???      01014   CALL CLEAN_LED_BAR
+000688 8E8B           01015   BSF LATC,7,0
+00068A 6A14           01016   CLRF IS_LEFT
+00068C EF?? F???      01017   GOTO GO_BACK
+                      01018   
+                      01019 ; Assigna la direccio (R) HIGH
+000690                01020 DIR_R_HIGH
+000690 0E08           01021   MOVLW .8
+000692 5C13           01022   SUBWF DIR_ACTUAL,0
+000694 B4D8           01023   BTFSC STATUS,Z,0
+000696 EF?? F???      01024   GOTO GO_BACK
+00069A 0E08           01025   MOVLW .8
+00069C 6E13           01026   MOVWF DIR_ACTUAL
+00069E EC?? F???      01027   CALL RESET_TICS_MIN
+                      01028   ; Encenem el valor corresponent a la barra de leds
+0006A2 EC?? F???      01029   CALL CLEAN_LED_BAR
+0006A6 868A           01030   BSF LATB,3,0
+0006A8 6A14           01031   CLRF IS_LEFT
+0006AA EF?? F???      01032   GOTO GO_BACK
+                      01033   
+                      01034 ; Assigna la direccio (R) MAX
+0006AE                01035 DIR_R_MAX
+0006AE 0E09           01036   MOVLW .9
+0006B0 5C13           01037   SUBWF DIR_ACTUAL,0
+0006B2 B4D8           01038   BTFSC STATUS,Z,0
+0006B4 EF?? F???      01039   GOTO GO_BACK
+0006B8 0E09           01040   MOVLW .9
+0006BA 6E13           01041   MOVWF DIR_ACTUAL
+0006BC EC?? F???      01042   CALL RESET_TICS_MIN
+                      01043   ; Encenem el valor corresponent a la barra de leds
+0006C0 EC?? F???      01044   CALL CLEAN_LED_BAR
+0006C4 888A           01045   BSF LATB,4,0
+0006C6 6A14           01046   CLRF IS_LEFT
+0006C8 EF?? F???      01047   GOTO GO_BACK
+                      01048 
+                      01049   
+                      01050 ; Treu l'output de ADC quan hagi acabat de fer la transformacio 
+0006CC                01051 WAIT_GO_ADC
+                      01052   ;Preparat per agafar l'output
+0006CC 82C2           01053   BSF ADCON0,GO_NOT_DONE,0
+                      01054   ;Procesessa l'output
 Warning[207]: Found label after column 1. (WAIT_ADC)
-0005B6                00908   WAIT_ADC
-0005B6 B2C2           00909     BTFSC ADCON0,GO_NOT_DONE,0
-0005B8 EF?? F???      00910     GOTO WAIT_ADC
-0005BC 0012           00911   RETURN
-                      00912   
-                      00913 ; Reprodueix una ruta guardada
-0005BE                00914 REPRODUIR_RUTA
-0005BE EC?? F???      00915   CALL RGB_WHITE
-0005C2 0E00           00916   MOVLW .0
-0005C4 5C26           00917   SUBWF ContSaves,0
-0005C6 A4D8           00918   BTFSS STATUS,Z,0
-0005C8 EF?? F???      00919   GOTO FINAL_RUTA
-                      00920   
-                      00921   ; Començem a reproduir
-0005CC CFEE F006      00922   MOVFF POSTINC0,VEL_ACTUAL
-0005D0 CFEE F019      00923   MOVFF POSTINC0,DIR_ACTUAL
-0005D4 CFEE F029      00924   MOVFF POSTINC0,TIME_DELAY_L
-0005D8 CFEE F030      00925   MOVFF POSTINC0,TIME_DELAY_H
-                      00926   ; Cridem a les funcions de direccio i velocitat
-0005DC EC?? F???      00927   CALL ASSIGNA_VEL
-0005E0 EC?? F???      00928   CALL ASSIGNA_DIR
-0005E4 EC?? F???      00929   CALL RESET_TICS_DELAY
-0005E8 2A28           00930   INCF DELAY_ESPERA_EN,1
-                      00931   ; Ens esperem a que el timer indiqui que ha passat el temps de delay
+0006CE                01055   WAIT_ADC
+0006CE B2C2           01056     BTFSC ADCON0,GO_NOT_DONE,0
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0006D0 EF?? F???      01057     GOTO WAIT_ADC
+0006D4 0012           01058   RETURN
+                      01059   
+                      01060 ; Reprodueix una ruta guardada
+0006D6                01061 REPRODUIR_RUTA
+0006D6 0E00           01062   MOVLW .0
+0006D8 5C1A           01063   SUBWF ContSaves,0
+0006DA B4D8           01064   BTFSC STATUS,Z,0
+0006DC EF?? F???      01065   GOTO FINAL_RUTA
+                      01066   
+                      01067   ; Començem a reproduir
+0006E0 CFEE F006      01068   MOVFF POSTINC0,VEL_ACTUAL
+0006E4 CFEE F013      01069   MOVFF POSTINC0,DIR_ACTUAL
+0006E8 CFEE F01D      01070   MOVFF POSTINC0,TIME_DELAY_L
+0006EC CFEE F01E      01071   MOVFF POSTINC0,TIME_DELAY_H
+                      01072   ; Cridem a les funcions de direccio i velocitat
+0006F0 EC?? F???      01073   CALL ASSIGNA_VEL
+0006F4 EC?? F???      01074   CALL ASSIGNA_DIR
+0006F8 EC?? F???      01075   CALL RESET_TICS_DELAY
+0006FC 681C           01076   SETF DELAY_ESPERA_EN,0
+                      01077   ; Ens esperem a que el timer indiqui que ha passat el temps de delay
 Warning[207]: Found label after column 1. (ESPERA_DELAY)
-0005EA                00932   ESPERA_DELAY
-0005EA B028           00933     BTFSC DELAY_ESPERA_EN,0
-0005EC EF?? F???      00934     GOTO ESPERA_DELAY
-                      00935     
-0005F0 0626           00936   DECF ContSaves,1
-0005F2 EF?? F???      00937   GOTO REPRODUIR_RUTA
-                      00938   
+0006FE                01078   ESPERA_DELAY
+0006FE B01C           01079     BTFSC DELAY_ESPERA_EN,0
+000700 EF?? F???      01080     GOTO ESPERA_DELAY
+                      01081     
+000704 061A           01082   DECF ContSaves,1
+000706 EF?? F???      01083   GOTO REPRODUIR_RUTA
+                      01084   
 Warning[207]: Found label after column 1. (FINAL_RUTA)
-0005F6                00939   FINAL_RUTA
-0005F6 6A27           00940   CLRF AUTOP_MODE
-0005F8 EC?? F???      00941   CALL RGB_GREEN
-0005FC EF?? F???      00942   GOTO LOOP
-                      00943   
-                      00944 ; Assigna la velocitat que li correspon al 7Seg pel AUTOP_MODE
-000600                00945 ASSIGNA_VEL
-000600 0E01           00946   MOVLW .1
-000602 5C06           00947   SUBWF VEL_ACTUAL,0
-000604 B4D8           00948   BTFSC STATUS,Z,0
-000606 EC?? F???      00949   CALL POSA_VEL_N_H
-00060A 0E02           00950   MOVLW .2
-00060C 5C06           00951   SUBWF VEL_ACTUAL,0
-00060E B4D8           00952   BTFSC STATUS,Z,0
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 20
+00070A                01085   FINAL_RUTA
+00070A 6A1B           01086   CLRF AUTOP_MODE
+00070C EC?? F???      01087   CALL RGB_GREEN
+000710 6805           01088   SETF MANUAL_MODE,0
+000712 EC?? F???      01089   CALL RESET_TICS_MIN
+000716 EF?? F???      01090   GOTO LOOP
+                      01091   
+                      01092 ; Assigna la velocitat que li correspon al 7Seg pel AUTOP_MODE
+00071A                01093 ASSIGNA_VEL
+00071A 0E01           01094   MOVLW .1
+00071C 5C06           01095   SUBWF VEL_ACTUAL,0
+00071E B4D8           01096   BTFSC STATUS,Z,0
+000720 EC?? F???      01097   CALL POSA_VEL_N_H
+000724 0E02           01098   MOVLW .2
+000726 5C06           01099   SUBWF VEL_ACTUAL,0
+000728 B4D8           01100   BTFSC STATUS,Z,0
+00072A EC?? F???      01101   CALL POSA_VEL_N_M
+00072E 0E03           01102   MOVLW .3
+000730 5C06           01103   SUBWF VEL_ACTUAL,0
+000732 B4D8           01104   BTFSC STATUS,Z,0
+000734 EC?? F???      01105   CALL POSA_VEL_N_L
+000738 0E04           01106   MOVLW .4
+00073A 5C06           01107   SUBWF VEL_ACTUAL,0
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 23
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000610 EC?? F???      00953   CALL POSA_VEL_N_M
-000614 0E03           00954   MOVLW .3
-000616 5C06           00955   SUBWF VEL_ACTUAL,0
-000618 B4D8           00956   BTFSC STATUS,Z,0
-00061A EC?? F???      00957   CALL POSA_VEL_N_L
-00061E 0E04           00958   MOVLW .4
-000620 5C06           00959   SUBWF VEL_ACTUAL,0
-000622 B4D8           00960   BTFSC STATUS,Z,0
-000624 C003 FF8C      00961   MOVFF CONST_7SEG_0,LATD
-000628 0E05           00962   MOVLW .5
-00062A 5C06           00963   SUBWF VEL_ACTUAL,0
-00062C B4D8           00964   BTFSC STATUS,Z,0
-00062E C002 FF8C      00965   MOVFF CONST_7SEG_LOW,LATD
-000632 0E06           00966   MOVLW .6
-000634 5C06           00967   SUBWF VEL_ACTUAL,0
-000636 B4D8           00968   BTFSC STATUS,Z,0
-000638 C001 FF8C      00969   MOVFF CONST_7SEG_MID,LATD
-00063C 0E07           00970   MOVLW .7
-00063E 5C06           00971   SUBWF VEL_ACTUAL,0
-000640 B4D8           00972   BTFSC STATUS,Z,0
-000642 C000 FF8C      00973   MOVFF CONST_7SEG_HIGH,LATD
-000646 0012           00974   RETURN
-                      00975   
-                      00976 ; Assigna la velocitat High Negative
-000648                00977 POSA_VEL_N_H
-000648 C000 FF8C      00978   MOVFF CONST_7SEG_HIGH,LATD
-00064C 8689           00979   BSF LATA,3,0
-00064E 0012           00980   RETURN
-                      00981   
-                      00982 ; Assigna la velocitat Mid Negative
-000650                00983 POSA_VEL_N_M
-000650 C001 FF8C      00984   MOVFF CONST_7SEG_MID,LATD
-000654 8689           00985   BSF LATA,3,0
-000656 0012           00986   RETURN
-                      00987    
-                      00988 ; Assigna la velocitat Low Negative
-000658                00989 POSA_VEL_N_L
-000658 C002 FF8C      00990   MOVFF CONST_7SEG_LOW,LATD
-00065C 8689           00991   BSF LATA,3,0
-00065E 0012           00992   RETURN
-                      00993   
-                      00994 ; Assigna la direccio que li correspon a la barra de leds pel AUTOP_MODE
-000660                00995 ASSIGNA_DIR
-                      00996   ; Netejem els leds
-000660 6A8B           00997   CLRF LATC,0
-000662 968A           00998   BCF LATB,3,0
-000664 988A           00999   BCF LATB,4,0
-000666 0E01           01000   MOVLW .1
-000668 5C19           01001   SUBWF DIR_ACTUAL,0
-00066A B4D8           01002   BTFSC STATUS,Z,0
-00066C 808B           01003   BSF LATC,0,0
-00066E 0E02           01004   MOVLW .2
-000670 5C19           01005   SUBWF DIR_ACTUAL,0
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 21
+00073C B4D8           01108   BTFSC STATUS,Z,0
+00073E EC?? F???      01109   CALL POSA_VEL_0 
+000742 0E05           01110   MOVLW .5
+000744 5C06           01111   SUBWF VEL_ACTUAL,0
+000746 B4D8           01112   BTFSC STATUS,Z,0
+000748 EC?? F???      01113   CALL POSA_VEL_P_L
+00074C 0E06           01114   MOVLW .6
+00074E 5C06           01115   SUBWF VEL_ACTUAL,0
+000750 B4D8           01116   BTFSC STATUS,Z,0
+000752 EC?? F???      01117   CALL POSA_VEL_P_M
+000756 0E07           01118   MOVLW .7
+000758 5C06           01119   SUBWF VEL_ACTUAL,0
+00075A B4D8           01120   BTFSC STATUS,Z,0
+00075C EC?? F???      01121   CALL POSA_VEL_P_H
+000760 0012           01122   RETURN
+                      01123   
+                      01124 ; Assigna la velocitat High Negative
+000762                01125 POSA_VEL_N_H
+000762 C000 FF8C      01126   MOVFF CONST_7SEG_HIGH,LATD
+000766 8689           01127   BSF LATA,3,0
+000768 6804           01128   SETF IS_NEGATIVE,0
+00076A 0012           01129   RETURN
+                      01130   
+                      01131 ; Assigna la velocitat Mid Negative
+00076C                01132 POSA_VEL_N_M
+00076C C001 FF8C      01133   MOVFF CONST_7SEG_MID,LATD
+000770 8689           01134   BSF LATA,3,0
+000772 6804           01135   SETF IS_NEGATIVE,0
+000774 0012           01136   RETURN
+                      01137    
+                      01138 ; Assigna la velocitat Low Negative
+000776                01139 POSA_VEL_N_L
+000776 C002 FF8C      01140   MOVFF CONST_7SEG_LOW,LATD
+00077A 8689           01141   BSF LATA,3,0
+00077C 6804           01142   SETF IS_NEGATIVE,0
+00077E 0012           01143   RETURN
+                      01144   
+                      01145 ; Assigna la velocitat 0
+000780                01146 POSA_VEL_0
+000780 C003 FF8C      01147   MOVFF CONST_7SEG_0,LATD
+000784 9689           01148   BCF LATA,3,0
+000786 6A04           01149   CLRF IS_NEGATIVE,0
+000788 0012           01150   RETURN
+                      01151   
+                      01152 ; Assigna la velocitat Low Positive
+00078A                01153 POSA_VEL_P_L
+00078A C002 FF8C      01154   MOVFF CONST_7SEG_LOW,LATD
+00078E 9689           01155   BCF LATA,3,0
+000790 6A04           01156   CLRF IS_NEGATIVE,0
+000792 0012           01157   RETURN
+                      01158   
+                      01159 ; Assigna la velocitat Mid Positive
+000794                01160 POSA_VEL_P_M
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 24
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000672 B4D8           01006   BTFSC STATUS,Z,0
-000674 828B           01007   BSF LATC,1,0
-000676 0E03           01008   MOVLW .3
-000678 5C19           01009   SUBWF DIR_ACTUAL,0
-00067A B4D8           01010   BTFSC STATUS,Z,0
-00067C 848B           01011   BSF LATC,2,0
-00067E 0E04           01012   MOVLW .4
-000680 5C19           01013   SUBWF DIR_ACTUAL,0
-000682 B4D8           01014   BTFSC STATUS,Z,0
-000684 868B           01015   BSF LATC,3,0
-000686 0E05           01016   MOVLW .5
-000688 5C19           01017   SUBWF DIR_ACTUAL,0
-00068A B4D8           01018   BTFSC STATUS,Z,0
-00068C EC?? F???      01019   CALL POSA_DIR_0
-000690 0E06           01020   MOVLW .6
-000692 5C19           01021   SUBWF DIR_ACTUAL,0
-000694 B4D8           01022   BTFSC STATUS,Z,0
-000696 8C8B           01023   BSF LATC,6,0
-000698 0E07           01024   MOVLW .7
-00069A 5C19           01025   SUBWF DIR_ACTUAL,0
-00069C B4D8           01026   BTFSC STATUS,Z,0
-00069E 8E8B           01027   BSF LATC,7,0
-0006A0 0E08           01028   MOVLW .8
-0006A2 5C19           01029   SUBWF DIR_ACTUAL,0
-0006A4 B4D8           01030   BTFSC STATUS,Z,0
-0006A6 868A           01031   BSF LATB,3,0
-0006A8 0E09           01032   MOVLW .9
-0006AA 5C19           01033   SUBWF DIR_ACTUAL,0
-0006AC B4D8           01034   BTFSC STATUS,Z,0
-0006AE 888A           01035   BSF LATB,4,0
-0006B0 0012           01036   RETURN
-                      01037   
-                      01038 ; Assigna la direccio 0
-0006B2                01039 POSA_DIR_0
-0006B2 888B           01040   BSF LATC,4,0
-0006B4 8A8B           01041   BSF LATC,5,0
-0006B6 0012           01042   RETURN
-                      01043   
-                      01044 ; Color del led RGB vermell pel mode record
-0006B8                01045 RGB_RED
-0006B8 908D           01046   BCF LATE,0,0
-0006BA 928D           01047   BCF LATE,1,0
-0006BC 848D           01048   BSF LATE,2,0
-0006BE 0012           01049   RETURN
-                      01050   
-                      01051 ; Color del led RGB verd pel mode manual
-0006C0                01052 RGB_GREEN
-0006C0 908D           01053   BCF LATE,0,0
-0006C2 828D           01054   BSF LATE,1,0
-0006C4 948D           01055   BCF LATE,2,0
-0006C6 0012           01056   RETURN
-                      01057 
-                      01058 ; Color del led RGB blau pel mode creuer
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 22
+000794 C001 FF8C      01161   MOVFF CONST_7SEG_MID,LATD
+000798 9689           01162   BCF LATA,3,0
+00079A 6A04           01163   CLRF IS_NEGATIVE,0
+00079C 0012           01164   RETURN
+                      01165   
+                      01166 ; Assigna la velocitat High Positive
+00079E                01167 POSA_VEL_P_H
+00079E C000 FF8C      01168   MOVFF CONST_7SEG_HIGH,LATD
+0007A2 9689           01169   BCF LATA,3,0
+0007A4 6A04           01170   CLRF IS_NEGATIVE,0
+0007A6 0012           01171   RETURN
+                      01172   
+                      01173 ; Assigna la direccio que li correspon a la barra de leds pel AUTOP_MODE
+0007A8                01174 ASSIGNA_DIR
+                      01175   ; Netejem els leds
+0007A8 EC?? F???      01176   CALL CLEAN_LED_BAR
+0007AC 0E01           01177   MOVLW .1
+0007AE 5C13           01178   SUBWF DIR_ACTUAL,0
+0007B0 B4D8           01179   BTFSC STATUS,Z,0
+0007B2 808B           01180   BSF LATC,0,0
+0007B4 0E02           01181   MOVLW .2
+0007B6 5C13           01182   SUBWF DIR_ACTUAL,0
+0007B8 B4D8           01183   BTFSC STATUS,Z,0
+0007BA 828B           01184   BSF LATC,1,0
+0007BC 0E03           01185   MOVLW .3
+0007BE 5C13           01186   SUBWF DIR_ACTUAL,0
+0007C0 B4D8           01187   BTFSC STATUS,Z,0
+0007C2 848B           01188   BSF LATC,2,0
+0007C4 0E04           01189   MOVLW .4
+0007C6 5C13           01190   SUBWF DIR_ACTUAL,0
+0007C8 B4D8           01191   BTFSC STATUS,Z,0
+0007CA 868B           01192   BSF LATC,3,0
+0007CC 0E05           01193   MOVLW .5
+0007CE 5C13           01194   SUBWF DIR_ACTUAL,0
+0007D0 B4D8           01195   BTFSC STATUS,Z,0
+0007D2 EC?? F???      01196   CALL POSA_DIR_0
+0007D6 0E06           01197   MOVLW .6
+0007D8 5C13           01198   SUBWF DIR_ACTUAL,0
+0007DA B4D8           01199   BTFSC STATUS,Z,0
+0007DC 8C8B           01200   BSF LATC,6,0
+0007DE 0E07           01201   MOVLW .7
+0007E0 5C13           01202   SUBWF DIR_ACTUAL,0
+0007E2 B4D8           01203   BTFSC STATUS,Z,0
+0007E4 8E8B           01204   BSF LATC,7,0
+0007E6 0E08           01205   MOVLW .8
+0007E8 5C13           01206   SUBWF DIR_ACTUAL,0
+0007EA B4D8           01207   BTFSC STATUS,Z,0
+0007EC 868A           01208   BSF LATB,3,0
+0007EE 0E09           01209   MOVLW .9
+0007F0 5C13           01210   SUBWF DIR_ACTUAL,0
+0007F2 B4D8           01211   BTFSC STATUS,Z,0
+0007F4 888A           01212   BSF LATB,4,0
+0007F6 0012           01213   RETURN
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 25
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0006C8                01059 RGB_BLUE
-0006C8 808D           01060   BSF LATE,0,0
-0006CA 928D           01061   BCF LATE,1,0
-0006CC 948D           01062   BCF LATE,2,0
-0006CE 0012           01063   RETURN
-                      01064   
-                      01065 ; Color del led RGB blanc pel mode pilot automatic
-0006D0                01066 RGB_WHITE
-0006D0 808D           01067   BSF LATE,0,0
-0006D2 828D           01068   BSF LATE,1,0
-0006D4 848D           01069   BSF LATE,2,0
-0006D6 0012           01070   RETURN
-                      01071 ;--------------------------------------
-                      01072 ; COMPTATGES D'INSTRUCCIONS
-                      01073 ;--------------------------------------
-                      01074 ; Compta 20ms corresponents al temps de rebots dels polsadors 
-                      01075 ; TTarget = 20ms | Tinst = 250ns --> #inst = 80.000 - 4 = 79996
-                      01076 ; 4 + (4*X + 6)*Y = 79996 --> X = 255 | Y = 78
-0006D8                01077 COUNT_20ms
-0006D8 0E01           01078   MOVLW .1 ;x = 256 - 255 = 1
-0006DA 6E07           01079   MOVWF ContInstL
-0006DC 0EB2           01080   MOVLW .178 ;y = 256 - 78 = 178
-0006DE 6E08           01081   MOVWF ContInstH
+                      01214   
+                      01215 ; Assigna la direccio 0
+0007F8                01216 POSA_DIR_0
+0007F8 888B           01217   BSF LATC,4,0
+0007FA 8A8B           01218   BSF LATC,5,0
+0007FC 0012           01219   RETURN
+                      01220   
+                      01221 ; Color del led RGB vermell pel mode record
+0007FE                01222 RGB_RED
+0007FE 808D           01223   BSF LATE,0,0
+000800 928D           01224   BCF LATE,1,0
+000802 948D           01225   BCF LATE,2,0
+000804 0012           01226   RETURN
+                      01227   
+                      01228 ; Color del led RGB verd pel mode manual
+000806                01229 RGB_GREEN
+000806 908D           01230   BCF LATE,0,0
+000808 828D           01231   BSF LATE,1,0
+00080A 948D           01232   BCF LATE,2,0
+00080C 0012           01233   RETURN
+                      01234 
+                      01235 ; Color del led RGB blau pel mode creuer
+00080E                01236 RGB_BLUE
+00080E 908D           01237   BCF LATE,0,0
+000810 928D           01238   BCF LATE,1,0
+000812 848D           01239   BSF LATE,2,0
+000814 0012           01240   RETURN
+                      01241   
+                      01242 ; Color del led RGB blanc pel mode pilot automatic
+000816                01243 RGB_WHITE
+000816 808D           01244   BSF LATE,0,0
+000818 828D           01245   BSF LATE,1,0
+00081A 848D           01246   BSF LATE,2,0
+00081C 0012           01247   RETURN
+                      01248   
+                      01249 ; Neteja amb 0's la barra de leds
+00081E                01250 CLEAN_LED_BAR
+00081E 6A8B           01251   CLRF LATC,0
+000820 968A           01252   BCF LATB,3,0
+000822 988A           01253   BCF LATB,4,0
+000824 0012           01254   RETURN
+                      01255 ;--------------------------------------
+                      01256 ; COMPTATGES D'INSTRUCCIONS
+                      01257 ;--------------------------------------
+                      01258 ; Compta 20ms corresponents al temps de rebots dels polsadors 
+                      01259 ; TTarget = 20ms | Tinst = 250ns --> #inst = 80.000 - 4 = 79996
+                      01260 ; 4 + (4*X + 6)*Y = 79996 --> X = 255 | Y = 78
+000826                01261 COUNT_20ms
+000826 0E01           01262   MOVLW .1 ;x = 256 - 255 = 1
+000828 6E07           01263   MOVWF ContInstL
+00082A 0EB2           01264   MOVLW .178 ;y = 256 - 78 = 178
+00082C 6E08           01265   MOVWF ContInstH
 Warning[207]: Found label after column 1. (T_REBOTS)
-0006E0                01082   T_REBOTS
-0006E0 2A07           01083     INCF ContInstL,1
-0006E2 A0D8           01084     BTFSS STATUS,C,0
-0006E4 EF?? F???      01085     GOTO T_REBOTS
-0006E8 0E01           01086     MOVLW .1
-0006EA 6E07           01087     MOVWF ContInstL
-0006EC 2A08           01088     INCF ContInstH,1
-0006EE A0D8           01089     BTFSS STATUS,C,0
-0006F0 EF?? F???      01090     GOTO T_REBOTS
-0006F4 0012           01091   RETURN
-                      01092   
-                      01093 ; Compta 222us corresponents a 1 pas dels 9 que hi ha per mesurar la direccio 
-                      01094 ; TTarget = 222us | Tinst = 250ns --> #inst = 888 - 4 = 884
-                      01095 ; 2 + 4*X = 884 --> 2 NOP's i X = 220
-0006F6                01096 COUNT_PAS_SERVO
-0006F6 0E24           01097   MOVLW .36 ;x = 256 - 220 = 36
-0006F8 6E22           01098   MOVWF ContPWML
-0006FA 0000           01099   NOP
-0006FC 0000           01100   NOP
-Warning[207]: Found label after column 1. (T_PAS)
-0006FE                01101   T_PAS
-0006FE 2A22           01102     INCF ContPWML,1
-000700 A0D8           01103     BTFSS STATUS,C,0
-000702 EF?? F???      01104     GOTO T_PAS  
-000706 0012           01105   RETURN
-                      01106   
-                      01107 ; Compta 0,5ms corresponents a l'estat inicial del servo a 0 graus
-                      01108 ; TTarget = 500us | Tinst = 250ns --> #inst = 2000 - 4 = 1996
-                      01109 ; 4 + (4*X + 6)*Y = 1996 --> X = 256 | Y = 2
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 23
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 26
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000708                01110 POS_INICIAL_SERVO
-000708 0E00           01111   MOVLW .0 ;x = 256 - 256 = 0
-00070A 6E22           01112   MOVWF ContPWML
-00070C 0EFE           01113   MOVLW .254 ;y = 256 - 2 = 254
-00070E 6E23           01114   MOVWF ContPWMH
+00082E                01266   T_REBOTS
+00082E 2A07           01267     INCF ContInstL,1
+000830 A0D8           01268     BTFSS STATUS,C,0
+000832 EF?? F???      01269     GOTO T_REBOTS
+000836 0E01           01270     MOVLW .1
+000838 6E07           01271     MOVWF ContInstL
+00083A 2A08           01272     INCF ContInstH,1
+00083C A0D8           01273     BTFSS STATUS,C,0
+00083E EF?? F???      01274     GOTO T_REBOTS
+000842 0012           01275   RETURN
+                      01276   
+                      01277 ; Compta 222us corresponents a 1 pas dels 9 que hi ha per mesurar la direccio 
+                      01278 ; TTarget = 222us | Tinst = 250ns --> #inst = 888 - 4 = 884
+                      01279 ; 2 + 4*X = 884 --> 2 NOP's i X = 220
+000844                01280 COUNT_PAS_SERVO
+000844 0E24           01281   MOVLW .36 ;x = 256 - 220 = 36
+000846 6E16           01282   MOVWF ContPWML
+000848 0000           01283   NOP
+00084A 0000           01284   NOP
+Warning[207]: Found label after column 1. (T_PAS)
+00084C                01285   T_PAS
+00084C 2A16           01286     INCF ContPWML,1
+00084E A0D8           01287     BTFSS STATUS,C,0
+000850 EF?? F???      01288     GOTO T_PAS  
+000854 0012           01289   RETURN
+                      01290   
+                      01291 ; Compta 0,5ms corresponents a l'estat inicial del servo a 0 graus
+                      01292 ; TTarget = 500us | Tinst = 250ns --> #inst = 2000 - 4 = 1996
+                      01293 ; 4 + (4*X + 6)*Y = 1996 --> X = 256 | Y = 2
+000856                01294 POS_INICIAL_SERVO
+000856 0E00           01295   MOVLW .0 ;x = 256 - 256 = 0
+000858 6E16           01296   MOVWF ContPWML
+00085A 0EFE           01297   MOVLW .254 ;y = 256 - 2 = 254
+00085C 6E17           01298   MOVWF ContPWMH
 Warning[207]: Found label after column 1. (T_INICIAL)
-000710                01115   T_INICIAL
-000710 2A22           01116     INCF ContPWML,1
-000712 A0D8           01117     BTFSS STATUS,C,0
-000714 EF?? F???      01118     GOTO T_INICIAL
-000718 0E00           01119     MOVLW .0
-00071A 6E22           01120     MOVWF ContPWML
-00071C 2A23           01121     INCF ContPWMH,1
-00071E A0D8           01122     BTFSS STATUS,C,0
-000720 EF?? F???      01123     GOTO T_INICIAL
-000724 0012           01124   RETURN
-                      01125         
+00085E                01299   T_INICIAL
+00085E 2A16           01300     INCF ContPWML,1
+000860 A0D8           01301     BTFSS STATUS,C,0
+000862 EF?? F???      01302     GOTO T_INICIAL
+000866 0E00           01303     MOVLW .0
+000868 6E16           01304     MOVWF ContPWML
+00086A 2A17           01305     INCF ContPWMH,1
+00086C A0D8           01306     BTFSS STATUS,C,0
+00086E EF?? F???      01307     GOTO T_INICIAL
+000872 0012           01308   RETURN
+                      01309 
+                      01310 ; Compta 100us corresponents al canvi de canal analogic pel joystick
+                      01311 ; TTarget = 50us | Tinst = 250ns --> #inst = 200 - 4 = 196
+                      01312 ; 2 + 4*X = 196 --> 2 NOP's i X = 48
+000874                01313 COUNT_CHANGE_CHANNEL
+000874 0ED0           01314   MOVLW .208 ;x = 256 - 48 = 208
+000876 6E07           01315   MOVWF ContInstL
+000878 0000           01316   NOP
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00087A 0000           01317   NOP
+Warning[207]: Found label after column 1. (T_CH)
+00087C                01318   T_CH
+00087C 2A07           01319     INCF ContInstL,1
+00087E A0D8           01320     BTFSS STATUS,C,0
+000880 EF?? F???      01321     GOTO T_CH  
+000884 0012           01322   RETURN
+                      01323         
 Warning[205]: Found directive in column 1. (END)
-                      01126 END
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 24
+                      01324 END
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 28
 
 
 SYMBOL TABLE
@@ -1337,6 +1564,9 @@ ACKSTAT                           00000006
 ACQT0                             00000003
 ACQT1                             00000004
 ACQT2                             00000005
+ACTIVA_PORT_DC                    0000012C
+ACTIVA_RB6                        0000013A
+ACTIVA_RB7                        00000140
 ADCON0                            00000FC2
 ADCON1                            00000FC1
 ADCON2                            00000FC0
@@ -1358,7 +1588,7 @@ ADON                              00000000
 ADRES                             00000FC3
 ADRESH                            00000FC4
 ADRESL                            00000FC3
-ALARM_EN                          00000011
+ALARM_EN                          0000000B
 AN0                               00000000
 AN1                               00000001
 AN10                              00000001
@@ -1372,20 +1602,21 @@ AN6                               00000001
 AN7                               00000002
 AN8                               00000002
 AN9                               00000003
-ASSIGNA_DIR                       00000660
-ASSIGNA_VEL                       00000600
-AUTOP_EN                          00000014
-AUTOP_MODE                        00000027
-BANKED                            00000001
-BAUDCON                           00000FB8
-BAUDCTL                           00000FB8
-BCLIE                             00000003
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 25
+ASSIGNA_DIR                       000007A8
+ASSIGNA_VEL                       0000071A
+ASSIGN_PWM_VEL                    000000BE
+AUTOP_EN                          0000000E
+AUTOP_MODE                        0000001B
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 29
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+BANKED                            00000001
+BAUDCON                           00000FB8
+BAUDCTL                           00000FB8
+BCLIE                             00000003
 BCLIF                             00000003
 BCLIP                             00000003
 BF                                00000000
@@ -1435,27 +1666,28 @@ CCPR2                             00000FBB
 CCPR2H                            00000FBC
 CCPR2L                            00000FBB
 CFGS                              00000006
-CHANGE_MANUAL_MODE                0000016C
-CHANGE_RECORDING_MODE             000001A8
-CHANGE_TO_CRUISE                  00000162
-CHANGE_TO_MANUAL                  00000158
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 26
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 30
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-CHANGE_TO_NO_RECORD               0000019E
-CHANGE_TO_RECORD                  0000018E
-CHECK_20ms                        000000A2
-CHECK_HIGH_DIR                    00000462
-CHECK_HIGH_VEL                    00000318
-CHECK_LOW_DIR                     00000436
-CHECK_LOW_VEL                     000002F6
-CHECK_TICS_DELAY_AUTO             0000006A
-CHECK_TICS_DELAY_REC              00000084
-CHECK_TICS_MIN                    000000E4
-CHECK_TICS_SEG                    00000126
+CHANGE_MANUAL_MODE                00000248
+CHANGE_RECORDING_MODE             00000294
+CHANGE_TO_CRUISE                  0000023E
+CHANGE_TO_MANUAL                  00000234
+CHANGE_TO_NO_RECORD               00000288
+CHANGE_TO_RECORD                  00000270
+CHECK_20ms                        0000017C
+CHECK_HIGH_DIR                    0000057A
+CHECK_HIGH_VEL                    0000042C
+CHECK_LOW_DIR                     0000054E
+CHECK_LOW_VEL                     0000040A
+CHECK_PWM_DC                      000000AC
+CHECK_TICS_DELAY_AUTO             0000006E
+CHECK_TICS_DELAY_REC              00000088
+CHECK_TICS_MIN                    000001B2
+CHECK_TICS_SEG                    000001F4
 CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
@@ -1464,6 +1696,7 @@ CIS                               00000003
 CK                                00000006
 CKE                               00000006
 CKP                               00000004
+CLEAN_LED_BAR                     0000081E
 CLKI                              00000007
 CLKO                              00000006
 CM0                               00000000
@@ -1477,8 +1710,10 @@ CONST_7SEG_0                      00000003
 CONST_7SEG_HIGH                   00000000
 CONST_7SEG_LOW                    00000002
 CONST_7SEG_MID                    00000001
-COUNT_20ms                        000006D8
-COUNT_PAS_SERVO                   000006F6
+CONTINUE_VEL                      000000B0
+COUNT_20ms                        00000826
+COUNT_CHANGE_CHANNEL              00000874
+COUNT_PAS_SERVO                   00000844
 CREN                              00000004
 CS                                00000002
 CSRC                              00000007
@@ -1490,42 +1725,44 @@ CVRCON                            00000FB5
 CVREF                             00000002
 CVREN                             00000007
 CVROE                             00000006
-CVRR                              00000005
-CVRSS                             00000004
-ContInstH                         00000008
-ContInstL                         00000007
-ContPWMH                          00000023
-ContPWML                          00000022
-ContSaves                         00000026
-ContTHigh                         00000021
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 27
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 31
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+CVRR                              00000005
+CVRSS                             00000004
+ContInstH                         00000008
+ContInstL                         00000007
+ContPWMH                          00000017
+ContPWML                          00000016
+ContSaves                         0000001A
+ContTHigh                         00000015
 D                                 00000005
 DC                                00000001
 DC1B0                             00000004
 DC1B1                             00000005
 DC2B0                             00000004
 DC2B1                             00000005
+DC_IS_SET                         00000021
 DDRA                              TRISA
 DDRB                              TRISB
 DDRC                              TRISC
 DDRD                              TRISD
 DDRE                              TRISE
-DELAY_ESPERA_EN                   00000028
-DIR_ACTUAL                        00000019
-DIR_L_HIGH                        000004B4
-DIR_L_LOW                         000004FA
-DIR_L_MAX                         00000490
-DIR_L_MID                         000004DA
-DIR_R_HIGH                        0000057A
-DIR_R_LOW                         0000053C
-DIR_R_MAX                         00000598
-DIR_R_MID                         0000055C
-DIR_S                             0000051C
+DELAY_ESPERA_EN                   0000001C
+DESACTIVA_PORT_DC                 00000146
+DIR_ACTUAL                        00000013
+DIR_L_HIGH                        000005CE
+DIR_L_LOW                         00000614
+DIR_L_MAX                         000005A8
+DIR_L_MID                         000005F4
+DIR_R_HIGH                        00000690
+DIR_R_LOW                         00000654
+DIR_R_MAX                         000006AE
+DIR_R_MID                         00000672
+DIR_S                             00000634
 DONE                              00000001
 D_A                               00000005
 D_NOT_A                           00000005
@@ -1544,25 +1781,26 @@ EEIE                              00000004
 EEIF                              00000004
 EEIP                              00000004
 EEPGD                             00000007
-END_PASSOS                        000000D8
-ESPERA_DELAY                      000005EA
-ESPERA_FI_P0                      0000017E
-ESPERA_FI_P1                      000001BE
-ESPERA_FI_P2                      000001F8
-FAST                              00000001
-FERR                              00000002
-FINAL_RUTA                        000005F6
-FLT0                              00000000
-FLTS                              00000002
-FREE                              00000004
-FSR0                              00000000
-FSR0H                             00000FEA
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 28
+END_PASSOS                        000001AC
+ESPERA_DELAY                      000006FE
+ESPERA_FI_P0                      00000260
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 32
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+ESPERA_FI_P1                      000002A8
+ESPERA_FI_P2                      000002F2
+FAST                              00000001
+FERR                              00000002
+FINAL_P1                          000002C2
+FINAL_RUTA                        0000070A
+FLT0                              00000000
+FLTS                              00000002
+FREE                              00000004
+FSR0                              00000000
+FSR0H                             00000FEA
 FSR0L                             00000FE9
 FSR1                              00000001
 FSR1H                             00000FE2
@@ -1576,7 +1814,8 @@ GIEH                              00000007
 GIEL                              00000006
 GIE_GIEH                          00000007
 GO                                00000001
-GO_BACK                           0000048E
+GO_BACK                           000005A6
+GO_BACK_DC                        000000BC
 GO_DONE                           00000001
 GO_NOT_DONE                       00000001
 HIGH_RSI                          00000040
@@ -1596,14 +1835,20 @@ IDLEN                             00000007
 INDF0                             00000FEF
 INDF1                             00000FE7
 INDF2                             00000FDF
-INITIAL_POSITION_RAM              00000204
-INIT_ADC                          0000028C
-INIT_IRQS                         00000298
-INIT_OSC                          0000021E
-INIT_PORTS                        00000226
-INIT_TMR                          000002A0
-INIT_VARS                         0000024E
+INITIAL_POSITION_RAM              0000030A
+INIT_ADC                          0000039C
+INIT_IRQS                         000003A8
+INIT_OSC                          00000324
+INIT_PORTS                        0000032C
+INIT_TMR                          000003B0
+INIT_VARS                         00000350
 INT0                              00000000
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 33
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 INT0E                             00000004
 INT0F                             00000001
 INT0IE                            00000004
@@ -1616,12 +1861,6 @@ INT1IF                            00000000
 INT1IP                            00000006
 INT1P                             00000006
 INT2                              00000002
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 29
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 INT2E                             00000004
 INT2F                             00000001
 INT2IE                            00000004
@@ -1643,7 +1882,7 @@ IRCF0                             00000004
 IRCF1                             00000005
 IRCF2                             00000006
 IRVST                             00000005
-IS_LEFT                           00000020
+IS_LEFT                           00000014
 IS_NEGATIVE                       00000004
 KBI0                              00000004
 KBI1                              00000005
@@ -1663,6 +1902,12 @@ LATB0                             00000000
 LATB1                             00000001
 LATB2                             00000002
 LATB3                             00000003
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 34
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 LATB4                             00000004
 LATB5                             00000005
 LATB6                             00000006
@@ -1675,12 +1920,6 @@ LATC3                             00000003
 LATC4                             00000004
 LATC5                             00000005
 LATC6                             00000006
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 30
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 LATC7                             00000007
 LATD                              00000F8C
 LATD0                             00000000
@@ -1696,7 +1935,7 @@ LATE0                             00000000
 LATE1                             00000001
 LATE2                             00000002
 LOAD_TMR                          0000001A
-LOOP                              000002C0
+LOOP                              000003D0
 LVDCON                            00000FD2
 LVDEN                             00000004
 LVDIE                             00000002
@@ -1710,18 +1949,24 @@ LVV0                              00000000
 LVV1                              00000001
 LVV2                              00000002
 LVV3                              00000003
-MAIN                              000002A8
+MAIN                              000003B8
 MANUAL_MODE                       00000005
 MCLR                              00000003
-MINUTE_PASSED                     00000108
+MINUTE_PASSED                     000001D6
 N                                 00000004
-NETEJA                            00000212
-NETEJA_RAM                        0000020C
-NEW_SERVO_PWM                     000000B0
+NETEJA                            00000318
+NETEJA_RAM                        00000312
+NEW_SERVO_PWM                     0000018A
 NOT_A                             00000005
 NOT_ADDRESS                       00000005
 NOT_BOR                           00000000
 NOT_CS                            00000002
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 35
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 NOT_DONE                          00000001
 NOT_MCLR                          00000003
 NOT_PD                            00000002
@@ -1734,12 +1979,6 @@ NOT_T1SYNC                        00000002
 NOT_T3SYNC                        00000002
 NOT_TO                            00000003
 NOT_W                             00000002
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 31
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 NOT_WR                            00000001
 NOT_WRITE                         00000002
 OBF                               00000006
@@ -1781,6 +2020,12 @@ PEIE_GIEL                         00000006
 PEN                               00000002
 PGC                               00000006
 PGD                               00000007
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 36
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 PGM                               00000005
 PIE1                              00000F9D
 PIE2                              00000FA0
@@ -1793,26 +2038,24 @@ PLUSW2                            00000FDB
 POR                               00000001
 PORTA                             00000F80
 PORTB                             00000F81
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 32
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 PORTC                             00000F82
 PORTD                             00000F83
 PORTE                             00000F84
-POSA_DIR_0                        000006B2
-POSA_VEL_N_H                      00000648
-POSA_VEL_N_L                      00000658
-POSA_VEL_N_M                      00000650
+POSA_DIR_0                        000007F8
+POSA_VEL_0                        00000780
+POSA_VEL_N_H                      00000762
+POSA_VEL_N_L                      00000776
+POSA_VEL_N_M                      0000076C
+POSA_VEL_P_H                      0000079E
+POSA_VEL_P_L                      0000078A
+POSA_VEL_P_M                      00000794
 POSTDEC0                          00000FED
 POSTDEC1                          00000FE5
 POSTDEC2                          00000FDD
 POSTINC0                          00000FEE
 POSTINC1                          00000FE6
 POSTINC2                          00000FDE
-POS_INICIAL_SERVO                 00000708
+POS_INICIAL_SERVO                 00000856
 PR2                               00000FCB
 PREINC0                           00000FEC
 PREINC1                           00000FE4
@@ -1836,9 +2079,19 @@ PSPIP                             00000007
 PSPMODE                           00000004
 PSSAC0                            00000002
 PSSAC1                            00000003
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 37
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 PSSBD0                            00000000
 PSSBD1                            00000001
 PWM1CON                           00000FB7
+PWM_VEL_0                         00000124
+PWM_VEL_H                         0000011C
+PWM_VEL_L                         00000104
+PWM_VEL_M                         00000110
 R                                 00000002
 RA0                               00000000
 RA1                               00000001
@@ -1852,12 +2105,6 @@ RB0                               00000000
 RB1                               00000001
 RB2                               00000002
 RB3                               00000003
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 33
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 RB4                               00000004
 RB5                               00000005
 RB6                               00000006
@@ -1891,38 +2138,39 @@ RD2                               00000002
 RD3                               00000003
 RD4                               00000004
 RD5                               00000005
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 38
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 RD6                               00000006
 RD7                               00000007
 RE0                               00000000
 RE1                               00000001
 RE2                               00000002
 RE3                               00000003
-RECORD_MODE                       00000017
-REPRODUIR_RUTA                    000005BE
+RECORD_MODE                       00000011
+REPRODUIR_RUTA                    000006D6
 RESET_TICS_ALARM                  0000003A
 RESET_TICS_DELAY                  0000002C
 RESET_TICS_MIN                    00000024
 RESET_TICS_SEG                    00000032
-RGB_BLUE                          000006C8
-RGB_GREEN                         000006C0
-RGB_RED                           000006B8
-RGB_WHITE                         000006D0
+RGB_BLUE                          0000080E
+RGB_GREEN                         00000806
+RGB_RED                           000007FE
+RGB_WHITE                         00000816
 RI                                00000004
 RSEN                              00000001
 RX                                00000007
 RX9                               00000006
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 34
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 RX9D                              00000000
 RXDTP                             00000005
 R_NOT_W                           00000002
 R_W                               00000002
 S                                 00000003
-SAVE_PARAMS                       000001D0
+SAVES_30                          000002FE
+SAVE_PARAMS                       000002C4
 SBOREN                            00000006
 SCK                               00000003
 SCKP                              00000004
@@ -1949,6 +2197,12 @@ SSPBUF                            00000FC9
 SSPCON1                           00000FC6
 SSPCON2                           00000FC5
 SSPEN                             00000005
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 39
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 SSPIE                             00000003
 SSPIF                             00000003
 SSPIP                             00000003
@@ -1970,12 +2224,6 @@ T016BIT                           00000006
 T08BIT                            00000006
 T0CKI                             00000004
 T0CON                             00000FD5
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 35
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 T0CS                              00000005
 T0IE                              00000005
 T0IF                              00000002
@@ -2007,13 +2255,21 @@ T3CKPS1                           00000005
 T3CON                             00000FB1
 T3SYNC                            00000002
 TABLAT                            00000FF5
-TAKE_DIRECTION                    00000422
+TAKE_DIRECTION                    00000536
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 40
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 TBLPTR                            00000FF6
 TBLPTRH                           00000FF7
 TBLPTRL                           00000FF6
 TBLPTRU                           00000FF8
-TIME_DELAY_H                      00000030
-TIME_DELAY_L                      00000029
+TEMPS_DC_HIGH                     00000166
+TEMPS_DC_LOW                      00000150
+TIME_DELAY_H                      0000001E
+TIME_DELAY_L                      0000001D
 TMR0                              00000FD6
 TMR0H                             00000FD7
 TMR0IE                            00000005
@@ -2029,12 +2285,6 @@ TMR1IF                            00000000
 TMR1IP                            00000000
 TMR1L                             00000FCE
 TMR1ON                            00000000
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 36
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 TMR2                              00000FCC
 TMR2IE                            00000001
 TMR2IF                            00000001
@@ -2065,6 +2315,12 @@ TRISA3                            00000003
 TRISA4                            00000004
 TRISA5                            00000005
 TRISA6                            00000006
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 41
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 TRISA7                            00000007
 TRISB                             00000F93
 TRISB0                            00000000
@@ -2088,12 +2344,6 @@ TRISD                             00000F95
 TRISD0                            00000000
 TRISD1                            00000001
 TRISD2                            00000002
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 37
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 TRISD3                            00000003
 TRISD4                            00000004
 TRISD5                            00000005
@@ -2119,44 +2369,48 @@ TXIF                              00000004
 TXIP                              00000004
 TXREG                             00000FAD
 TXSTA                             00000FAC
-T_INICIAL                         00000710
-T_PAS                             000006FE
-T_PASSOS                          000000CC
-T_REBOTS                          000006E0
-Tics20                            00000018
-TicsAlarmH                        00000013
-TicsAlarmL                        00000012
-TicsDelayH                        00000025
-TicsDelayL                        00000024
-TicsMinH                          00000009
-TicsMinL                          00000010
-TicsSegH                          00000016
-TicsSegL                          00000015
-UA                                00000001
-UPDATE_SPEED                      0000014A
-VCFG0                             00000004
-VCFG1                             00000005
-VDIRMAG                           00000007
-VEL_0                             000003A2
-VEL_ACTUAL                        00000006
-VEL_N_HIGH                        00000336
-VEL_N_LOW                         00000380
-VEL_N_MID                         0000035E
-VEL_P_HIGH                        00000402
-VEL_P_LOW                         000003C2
-VEL_P_MID                         000003E2
-VPP                               00000003
-VREFM                             00000002
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 38
+T_CH                              0000087C
+T_HIGH_DC                         0000001F
+T_INICIAL                         0000085E
+T_LOW_DC                          00000020
+T_PAS                             0000084C
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 42
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+T_PASSOS                          000001A0
+T_REBOTS                          0000082E
+Tics20                            00000012
+TicsAlarmH                        0000000D
+TicsAlarmL                        0000000C
+TicsDC                            00000022
+TicsDelayH                        00000019
+TicsDelayL                        00000018
+TicsMinH                          00000009
+TicsMinL                          0000000A
+TicsSegH                          00000010
+TicsSegL                          0000000F
+UA                                00000001
+UPDATE_SPEED                      00000226
+VCFG0                             00000004
+VCFG1                             00000005
+VDIRMAG                           00000007
+VEL_0                             000004B6
+VEL_ACTUAL                        00000006
+VEL_N_HIGH                        0000044A
+VEL_N_LOW                         00000494
+VEL_N_MID                         00000472
+VEL_P_HIGH                        00000516
+VEL_P_LOW                         000004D6
+VEL_P_MID                         000004F6
+VPP                               00000003
+VREFM                             00000002
 VREFP                             00000003
 W                                 00000000
-WAIT_ADC                          000005B6
-WAIT_GO_ADC                       000005B4
+WAIT_ADC                          000006CE
+WAIT_GO_ADC                       000006CC
 WCOL                              00000007
 WDTCON                            00000FD1
 WR                                00000001
@@ -2179,6 +2433,12 @@ _BOR_SOFT_2L                      000000FB
 _CCP2MX_RB3_3H                    000000FE
 _CCP2MX_RC1_3H                    000000FF
 _CONFIG1H                         00300001
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 43
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _CONFIG2H                         00300003
 _CONFIG2L                         00300002
 _CONFIG3H                         00300005
@@ -2206,12 +2466,6 @@ _EBTR0_ON_7L                      000000FE
 _EBTR1_OFF_7L                     000000FF
 _EBTR1_ON_7L                      000000FD
 _EBTRB_OFF_7H                     000000FF
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 39
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _EBTRB_ON_7H                      000000BF
 _FCMEN_OFF_1H                     000000BF
 _FCMEN_ON_1H                      000000FF
@@ -2238,6 +2492,12 @@ _OSC_HS_1H                        000000F2
 _OSC_INTIO1_1H                    000000F9
 _OSC_INTIO2_1H                    000000F8
 _OSC_LP_1H                        000000F0
+MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-25-2023  14:07:01         PAGE 44
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _OSC_RCIO_1H                      000000F7
 _OSC_RC_1H                        000000F3
 _OSC_XT_1H                        000000F1
@@ -2265,12 +2525,6 @@ _WDTPS_8192_2H                    000000FB
 _WDTPS_8_2H                       000000E7
 _WDT_OFF_2H                       000000FE
 _WDT_ON_2H                        000000FF
-MPASM 5.86             NEWPIC_8B_GENERAL.ASM   2-23-2023  13:47:05         PAGE 40
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _WRT0_OFF_6L                      000000FF
 _WRT0_ON_6L                       000000FE
 _WRT1_OFF_6L                      000000FF
@@ -2286,7 +2540,7 @@ _XINST_ON_4L                      000000FF
 __18F4321                         00000001
 
 Errors   :     0
-Warnings :    49 reported,     0 suppressed
+Warnings :    54 reported,     0 suppressed
 Messages :     0 reported,     0 suppressed
 
 
