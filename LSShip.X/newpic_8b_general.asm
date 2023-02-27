@@ -119,7 +119,7 @@ RESET_TICS_DELAY
 
 ; Reseteja el comptador de 1seg   
 RESET_TICS_SEG
-  SETF AUTOP_EN,0
+  SETF AUTOP_EN
   CLRF TicsSegH
   CLRF TicsSegL
   RETURN
@@ -170,7 +170,7 @@ CHECK_TICS_DELAY_REC
   INCF TicsDelayL,1
   BTFSC STATUS,C,0
   INCF TicsDelayH,1
-  MOVLW HIGH(.58800)
+  MOVLW HIGH(.58800) 
   SUBWF TicsDelayH,0
   BTFSS STATUS,Z,0
   RETURN
@@ -290,7 +290,7 @@ TEMPS_DC_LOW
   GOTO GO_BACK_DC
   CALL ACTIVA_PORT_DC
   CLRF TicsDC
-  SETF DC_IS_SET,0
+  SETF DC_IS_SET
   GOTO GO_BACK_DC
  
 ; Periode de temps que el motor DC estara ences  
@@ -393,11 +393,7 @@ CHECK_TICS_SEG
   BTFSC RECORD_MODE,0
   RETURN
   ; Si no hem guardat res, no canviem al mode pilot automatic
-  MOVLW .0
-  SUBWF ContSaves,0
-  BTFSC STATUS,Z,0
-  RETURN
-  SETF AUTOP_MODE,0
+  SETF AUTOP_MODE
   CALL RGB_WHITE
   CALL INITIAL_POSITION_RAM
   RETURN
@@ -457,7 +453,7 @@ CHANGE_TO_RECORD
 CHANGE_TO_NO_RECORD
   CLRF RECORD_MODE
   CALL RGB_GREEN
-  SETF MANUAL_MODE,0
+  SETF MANUAL_MODE
   MOVLW .0
   SUBWF ContSaves,0
   BTFSS STATUS,Z,0
@@ -480,13 +476,23 @@ CHANGE_RECORDING_MODE
   CLRF AUTOP_EN
   ; Si s'ha activat el mode pilot automatic, no canviem de mode de gravacio
   BTFSC AUTOP_MODE,0
-  RETURN
+  GOTO REVISA_AUTOP
   BTFSS RECORD_MODE,0
   GOTO CHANGE_TO_RECORD
   GOTO CHANGE_TO_NO_RECORD
   FINAL_P1
   RETURN
 
+; Revisa si s'hauria d'activar el mode pilot automatic mirant si té alguna ruta
+REVISA_AUTOP
+  MOVLW .0
+  SUBWF ContSaves,0
+  BTFSS STATUS,Z,0 
+  GOTO FINAL_P1
+  CLRF AUTOP_MODE
+  CALL RGB_GREEN
+  GOTO FINAL_P1
+  
 ; Guarda la velocitat, direccio i delay si estem en el mode record
 SAVE_PARAMS
   CALL COUNT_20ms
@@ -523,12 +529,7 @@ TIME_SAVE
   
 ; Tornem al mode manual perque s'han fet 30 saves (el maxim)
 SAVES_30
-    CALL TIME_SAVE
-    ; Guardar velocitat
-  ;MOVFF VEL_ACTUAL,POSTINC0
-  ; Guardar direccio
-  ;MOVFF DIR_ACTUAL,POSTINC0
-  ;CALL TIME_SAVE
+  CALL TIME_SAVE
   DECF ContSaves,1
   CLRF RECORD_MODE
   CALL RESET_TICS_MIN
@@ -620,7 +621,7 @@ INIT_VARS
   CALL RESET_TICS_DELAY
   CLRF ContSaves
   CLRF TicsDC
-  SETF DC_IS_SET,0
+  SETF DC_IS_SET
   ; Inicialitzem els PWM
   BCF LATA,2,0
   BSF LATB,6,0		    
@@ -1094,7 +1095,7 @@ REPRODUIR_RUTA
   CALL ASSIGNA_VEL
   CALL ASSIGNA_DIR
   CALL RESET_TICS_DELAY
-  SETF DELAY_ESPERA_EN,0
+  SETF DELAY_ESPERA_EN
   ; Ens esperem a que el timer indiqui que ha passat el temps de delay
   ESPERA_DELAY
     BTFSC DELAY_ESPERA_EN,0
@@ -1106,7 +1107,7 @@ REPRODUIR_RUTA
   FINAL_RUTA
   CLRF AUTOP_MODE
   CALL RGB_GREEN
-  SETF MANUAL_MODE,0
+  SETF MANUAL_MODE
   CALL RESET_TICS_MIN
   GOTO LOOP
   
@@ -1146,21 +1147,21 @@ ASSIGNA_VEL
 POSA_VEL_N_H
   MOVFF CONST_7SEG_HIGH,LATD
   BSF LATA,3,0
-  SETF IS_NEGATIVE,0
+  SETF IS_NEGATIVE
   RETURN
   
 ; Assigna la velocitat Mid Negative
 POSA_VEL_N_M
   MOVFF CONST_7SEG_MID,LATD
   BSF LATA,3,0
-  SETF IS_NEGATIVE,0
+  SETF IS_NEGATIVE
   RETURN
    
 ; Assigna la velocitat Low Negative
 POSA_VEL_N_L
   MOVFF CONST_7SEG_LOW,LATD
   BSF LATA,3,0
-  SETF IS_NEGATIVE,0
+  SETF IS_NEGATIVE
   RETURN
   
 ; Assigna la velocitat 0
