@@ -392,9 +392,7 @@ CHECK_TICS_SEG
   ; Si estem canviant de mode a recording a manual, ignorem la pulsacio
   BTFSC RECORD_MODE,0
   RETURN
-  ; Si no hem guardat res, no canviem al mode pilot automatic
   SETF AUTOP_MODE
-  CALL RGB_WHITE
   CALL INITIAL_POSITION_RAM
   RETURN
     
@@ -1081,6 +1079,8 @@ WAIT_GO_ADC
   
 ; Reprodueix una ruta guardada
 REPRODUIR_RUTA
+  CALL RGB_WHITE
+  CONTINUE_RUTA
   MOVLW .0
   SUBWF ContSaves,0
   BTFSC STATUS,Z,0
@@ -1102,7 +1102,7 @@ REPRODUIR_RUTA
     GOTO ESPERA_DELAY
     
   DECF ContSaves,1
-  GOTO REPRODUIR_RUTA
+  GOTO CONTINUE_RUTA
   
   FINAL_RUTA
   CLRF AUTOP_MODE
