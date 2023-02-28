@@ -85,7 +85,8 @@ T_LOW_DC	 EQU  0x20
 DC_IS_SET	 EQU  0x21
 ; Els Tics configurats de periode del motor DC
 TicsDC		 EQU  0x22
-
+; Comptador auxiliar per guardar els saves que s'han fet en el AUTOP_MODE
+ContSavesAux	 EQU  0x23
 ORG 0x0000
 GOTO MAIN
 ORG 0x0008
@@ -393,7 +394,6 @@ CHECK_TICS_SEG
   BTFSC RECORD_MODE,0
   RETURN
   SETF AUTOP_MODE
-  CALL INITIAL_POSITION_RAM
   RETURN
     
 ;--------------------------------------
@@ -424,6 +424,8 @@ CHANGE_TO_CRUISE
 ; Canvia el mode del polsador manual pel corresponent (filtrant rebots)
 CHANGE_MANUAL_MODE
   CALL COUNT_20ms
+  BTFSC PORTB,0,0
+  RETURN
   BTFSC RECORD_MODE,0
   GOTO ESPERA_FI_P0
   CALL RESET_TICS_MIN
@@ -462,6 +464,8 @@ CHANGE_TO_NO_RECORD
 ; Es canvia de mode quan deixem anar el polsador
 CHANGE_RECORDING_MODE
   CALL COUNT_20ms
+  BTFSC PORTB,1,0
+  RETURN
   BTFSS MANUAL_MODE,0
   RETURN
   CALL RESET_TICS_MIN
@@ -494,6 +498,8 @@ REVISA_AUTOP
 ; Guarda la velocitat, direccio i delay si estem en el mode record
 SAVE_PARAMS
   CALL COUNT_20ms
+  BTFSC PORTB,2,0
+  RETURN
   BTFSS RECORD_MODE,0
   GOTO ESPERA_FI_P2
   INCF ContSaves,1
@@ -509,7 +515,7 @@ SAVE_PARAMS
   MOVFF VEL_ACTUAL,POSTINC0
   ; Guardar direccio
   MOVFF DIR_ACTUAL,POSTINC0
-
+  BTG LATA,4,0 ;DEBUG for the 20ms delay
   ; Reiniciar delay
   CALL RESET_TICS_DELAY
   CALL RESET_TICS_MIN
@@ -590,6 +596,9 @@ INIT_PORTS
   BCF TRISE,1,0
   BCF TRISE,2,0
   BCF INTCON2,RBPU,0
+  ; DEBUG FOR THE 20ms delay
+  BCF TRISA,4,0
+  BCF LATA,4,0
   RETURN
 
 ; Inicialitza variables a utilitzar
@@ -1080,9 +1089,11 @@ WAIT_GO_ADC
 ; Reprodueix una ruta guardada
 REPRODUIR_RUTA
   CALL RGB_WHITE
+  CALL INITIAL_POSITION_RAM
+  MOVFF ContSaves,ContSavesAux 
   CONTINUE_RUTA
   MOVLW .0
-  SUBWF ContSaves,0
+  SUBWF ContSavesAux,0
   BTFSC STATUS,Z,0
   GOTO FINAL_RUTA
   
@@ -1094,6 +1105,7 @@ REPRODUIR_RUTA
   ; Cridem a les funcions de direccio i velocitat
   CALL ASSIGNA_VEL
   CALL ASSIGNA_DIR
+  BTG LATA,4,0 ; DEBUG for 20ms  delay
   CALL RESET_TICS_DELAY
   SETF DELAY_ESPERA_EN
   ; Ens esperem a que el timer indiqui que ha passat el temps de delay
@@ -1101,7 +1113,7 @@ REPRODUIR_RUTA
     BTFSC DELAY_ESPERA_EN,0
     GOTO ESPERA_DELAY
     
-  DECF ContSaves,1
+  DECF ContSavesAux,1
   GOTO CONTINUE_RUTA
   
   FINAL_RUTA
