@@ -1105,14 +1105,13 @@ REPRODUIR_RUTA
   ; Cridem a les funcions de direccio i velocitat
   CALL ASSIGNA_VEL
   CALL ASSIGNA_DIR
-  BTG LATA,4,0 ; DEBUG for 20ms  delay
   CALL RESET_TICS_DELAY
   SETF DELAY_ESPERA_EN
   ; Ens esperem a que el timer indiqui que ha passat el temps de delay
   ESPERA_DELAY
     BTFSC DELAY_ESPERA_EN,0
     GOTO ESPERA_DELAY
-    
+  BTG LATA,4,0 ; DEBUG for 20ms  delay   
   DECF ContSavesAux,1
   GOTO CONTINUE_RUTA
   

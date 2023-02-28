@@ -1,5 +1,5 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Tue Feb 28 12:43:03 2023
+Linker Map File - Created Tue Feb 28 15:08:52 2023
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -69,7 +69,7 @@ Linker Map File - Created Tue Feb 28 12:43:03 2023
                 DIR_R_MID   0x0006b2    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
                     DIR_S   0x000674    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
                END_PASSOS   0x0001b0    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
-             ESPERA_DELAY   0x00074c    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
+             ESPERA_DELAY   0x00074a    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
              ESPERA_FI_P0   0x00025c    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
              ESPERA_FI_P1   0x0002b2    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
              ESPERA_FI_P2   0x00031a    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
@@ -223,7 +223,7 @@ Linker Map File - Created Tue Feb 28 12:43:03 2023
                  WAIT_ADC   0x00070e    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
            REPRODUIR_RUTA   0x000716    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
             CONTINUE_RUTA   0x000722    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
-             ESPERA_DELAY   0x00074c    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
+             ESPERA_DELAY   0x00074a    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
                FINAL_RUTA   0x000758    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
               ASSIGNA_VEL   0x000768    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
              POSA_VEL_N_H   0x0007b0    program     static C:\Users\angel\OneDrive\Escritorio\Compus\S2\REPO_F1\LSShip.X\newpic_8b_general.asm
