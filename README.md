@@ -9,6 +9,7 @@ Some of the functionalities of the ship include:
 
 -Recording of several values of direction and speed, in order to be able to replicate them later with exactly the same time spacing between each recorded direction and speed value. 
 
+Demo video: https://youtu.be/4yO8Ve91BX4
 
 ![Alt text](board_images/1.jpeg)
 
